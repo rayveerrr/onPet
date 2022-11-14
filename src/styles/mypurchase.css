@@ -1,0 +1,219 @@
+@import url('../styles/styledefault.css');
+
+.main-content-container{
+    width: 70%;
+    background-color: var(--white);
+    margin: 120px auto 20px auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-content-container .menu-bar{
+    width: 20%;
+    height: 25%;
+    background-color: var(--white);
+    color: var(--white);
+}
+
+.main-content-container .menu-bar .profile-container{
+    width: 100%;
+    height: 70px;
+    background-color: var(--white);
+    color: var(--kulayblack);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.main-content-container .menu-bar .profile-container .user-icon-container{
+    width: 50px;
+    height: 50px;
+}
+
+.main-content-container .menu-bar .profile-container .user-icon-container img{
+    width: 100%;
+    height: 100%;
+    background-color: var(--white);
+}
+
+.main-content-container .menu-bar .profile-container .username-container p{
+    padding: 0;
+    margin: 0;
+}
+.main-content-container .menu-bar .profile-container .username-container p:nth-child(2) a{
+    font-size: small;
+    color: var(--kulayblack);
+}
+
+.main-content-container .menu-bar .menu-container{
+    background-color: var(--kulayblack);
+    padding: 10px 10px 10px 0;
+}
+
+.main-content-container .menu-bar .menu-container .dropdown{
+    position: relative;
+}
+
+.main-content-container .menu-bar .menu-container .dropdown .dropdown-content{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    right: 0;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.main-content-container .menu-bar .menu-container .dropdown .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.main-content-container .menu-bar .menu-container .dropdown-content a:hover{
+    background-color: #f1f1f1
+}
+
+.main-content-container .menu-bar .menu-container .dropdown:hover .dropdown-content{
+    display: block;
+}
+
+.main-content-container .menu-bar .menu-container .dropdown:hover .dropbtn{
+    background-color: #3e8e41;
+}
+
+.main-content-container .menu-bar .menu-container a{
+    color: var(--white);
+    margin-left: 10%;
+    display: flex;
+    padding: 10px;
+}
+
+.main-content-container .menu-bar .menu-container a:hover{
+    background-color: var(--white);
+    color: var(--kulayblack);
+}
+
+.main-content-container .menu-bar .menu-container a .dropdown-logo-container{
+    width: 15px;
+    height: 15px;
+    margin-left: 10px;
+}
+
+.main-content-container .menu-bar .menu-container a .dropdown-logo-container img{
+    width: 100%;
+    height: 100%;
+    background-color: var(--white);
+}
+
+.content-container{
+    width: 77%;
+    height: 70vh;
+}
+
+.content-container .content-header{
+    height: 10%;
+    background-color: var(--kulayblack);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.content-container .content-header a{
+    color: var(--white);
+}
+
+.content-container .content-header a:nth-child(1){
+    color: var(--kulaygray);
+}
+
+.content-container .purchase-container{
+    color: var(--white);
+    margin-top: 5px;
+}
+
+.content-container .purchase-container .purchase-border{
+    border: 1px var(--kulayblack) solid;
+}
+
+.content-container .purchase-container .purchase-border .purchase-header{
+    width: 95%;
+    height: 5%; 
+    color: var(--kulayblack);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.content-container .purchase-container .purchase-border .purchase-header h4{
+    padding: 0;
+    margin: 5px 0;
+}
+
+.content-container .purchase-container .purchase-border .purchase{
+    width: 95%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+}
+
+.content-container .purchase-container .purchase-border .purchase .img-container{
+    width: 120px;
+    height: 100px;
+    border: 1px var(--kulaygray) solid;
+}
+
+.content-container .purchase-container .purchase-border .purchase .img-container img{  
+    width: 100%;
+    height: 100%;
+}
+
+.content-container .purchase-container .purchase-border .purchase .product-details{
+    color: var(--kulayblack);
+    margin-left: 10px;
+}
+
+.content-container .purchase-container .purchase-border .purchase .product-details h3,
+.content-container .purchase-container .purchase-border .purchase .product-details p{
+    padding: 0;
+    margin: 0;
+}
+
+.content-container .purchase-container .purchase-border .purchase .price{
+    color: var(--kulayblack);
+    text-align: end;
+    flex: 1;
+}
+
+.content-container .purchase-container .purchase-border .total{
+    width: 95%;
+    margin: 0 auto;
+    color: var(--kulayblack);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+}
+
+.content-container .purchase-container .purchase-border .total p{
+    margin: 0 10px;
+    padding: 0;
+}
+
+.content-container .purchase-container .purchase-border .total p span{
+    font-size:x-large;
+    font-weight: 700;
+}
+
+.content-container .purchase-container .purchase-border .total button{
+    padding: 10px;
+    background-color: var(--kulaygray);
+    border: none;
+    border-radius: 7px;
+    color: var(--white);
+    font-size: medium;
+    margin-bottom: 5px;
+}
