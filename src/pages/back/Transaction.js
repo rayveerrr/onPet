@@ -20,6 +20,7 @@ import Table from '@mui/material/Table';
   import Modal from '@mui/material/Modal';
   import CheckIcon from '@mui/icons-material/Check';
 import useAuthentication from '../../hooks/auth/authenticate-user';
+import { getMyOrdersService, orderStatusAcceptedService, orderStatusCompletedService, orderStatusRejectedService, orderUpdateStatusService } from '../../data/firebase/services/order.service';
 
   const editStyle = {
     bgcolor: 'green',
@@ -32,8 +33,8 @@ import useAuthentication from '../../hooks/auth/authenticate-user';
       color: 'green',
     }
   }
-  const hideStyle = {
-    bgcolor: 'gray',
+  const acceptStyle = {
+    bgcolor: 'blue',
     color: 'white',
     fontSize: 16,
     borderRadius: 8,
@@ -83,7 +84,7 @@ const phModal = {
 
 const PetHistory = () => {
 
-  // useAuthentication('User')
+  useAuthentication('User')
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => {
@@ -119,8 +120,8 @@ const PetHistory = () => {
     
     useEffect(() => {
       const getOrders = async () => {
-        const data = await getDocs(ordersCollectionRef);
-        setOrders(data.docs.map((doc) => ({...doc.data(), id: doc.id })))
+        const orders = await getMyOrdersService();
+        setOrders(orders)
       }
       getOrders();
     }, []);
@@ -147,6 +148,13 @@ const PetHistory = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
       };
+
+      const submitUpdateStatusOrder = async (id, Status) => {
+        await orderUpdateStatusService(id, Status)
+        const myOrders = await getMyOrdersService()
+        setOrders(myOrders)
+        alert('Status updated.')
+      }
 
   return (
     <div>
@@ -195,8 +203,9 @@ const PetHistory = () => {
                             <TableCell align="left"></TableCell>
                             <TableCell align="right">{order.Status}</TableCell> 
                             <TableCell align="left">
-                              <IconButton sx={editStyle}>Accept<CheckIcon fontSize='small'/></IconButton> 
-                              <IconButton sx={deleteStyle}>Reject<DeleteIcon fontSize='small'/></IconButton>
+                              <IconButton sx={acceptStyle} onClick={() => submitUpdateStatusOrder(order.id, 'On Process')}>Accept<CheckIcon fontSize='small'/></IconButton> 
+                              <IconButton sx={deleteStyle} onClick={() => submitUpdateStatusOrder(order.id, 'Rejected')}>Reject<DeleteIcon fontSize='small'/></IconButton>
+                              <IconButton sx={editStyle} onClick={() => submitUpdateStatusOrder(order.id, 'Completed')}>Complete<DeleteIcon fontSize='small'/></IconButton>
                             </TableCell>
                           </TableRow>
                         ))}

@@ -10,6 +10,13 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase-config';
 import useAuthentication from '../../hooks/auth/authenticate-user';
 
+// ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
+// ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
+// ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
+// ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
+// ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
+// ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
+
 const editAdminModal = {
     position: 'absolute',
     top: '50%',
@@ -49,7 +56,7 @@ const EditAdmin = () => {
         getUsers();
       }, []);
 
-    const { id } = useParams();
+    
 
     const [navVisible, showNavbar] = useState(false);
 

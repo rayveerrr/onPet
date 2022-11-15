@@ -28,7 +28,7 @@ function Login() {
             const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
             if(user){
                 sessionStorage.setItem('email', loginEmail)
-                window.location = "/homepage";
+                window.location.href = "/homepage";
                 console.log(user)
             }
         } catch (e) {

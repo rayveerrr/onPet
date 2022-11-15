@@ -25,6 +25,7 @@ import Table from '@mui/material/Table';
   import AddBoxIcon from '@mui/icons-material/AddBox';
   import Modal from '@mui/material/Modal';
 import useAuthentication from '../../hooks/auth/authenticate-user';
+import { updatePetHistoryService } from '../../data/firebase/services/petHistory.service';
 
   // Hindi pa tapos si update, hindi ko magawa potek
   // Hindi pa tapos si update, hindi ko magawa potek
@@ -114,6 +115,8 @@ const PetHistory = () => {
     const [remarksErr, setRemarksErr] = useState('');
     const [speciesErr, setSpeciesErr] = useState('');
     const [healthHistoryErr, setHealthHistoryErr] = useState('');
+    
+    const [petToBeUpdate, setPetToBeUpdate] = useState(null);
   
     const [history, setHistory] = useState([]);
   
@@ -124,15 +127,15 @@ const PetHistory = () => {
     // add new data
     const addPetHistory = async () => {
   
-      setAgeErr(false)
-      setBreedErr(false)
-      setGenderErr(false)
-      setDateErr(false)
-      setOwnerNameErr(false)
-      setPetNameErr(false)
-      setRemarksErr(false)
-      setSpeciesErr(false)
-      setHealthHistoryErr(false)
+      setAgeErr("false")
+      setBreedErr("false")
+      setGenderErr("false")
+      setDateErr("false")
+      setOwnerNameErr("false")
+      setPetNameErr("false")
+      setRemarksErr("false")
+      setSpeciesErr("false")
+      setHealthHistoryErr("false")
       if( age == ''){
         setAgeErr(true)
       }
@@ -176,7 +179,7 @@ const PetHistory = () => {
       getHistory();
     }, []);
 
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
 
     const orderStyle = {
         display: 'flex',
@@ -208,7 +211,8 @@ const PetHistory = () => {
       setOpen(false);
     };
 
-    // update data
+    // this is how to update data in same file folder
+    // this is my reference to understand better the update function of firebase using the repo and service.
     const updateHistory = async (id, age, healthHistory) => {
       const historyDoc = doc(db, "petHistory", id)
       const newAge = { age: setAge}
@@ -227,10 +231,13 @@ const PetHistory = () => {
 
     // Modal  for Edit
     const [edit, setEdit] = useState(false);
-    const handleOpenEdit = () => {
+    const handleOpenEdit = (pet) => {
+      console.log(pet)
+      setPetToBeUpdate(pet)
       setEdit(true);
     };
     const handleCloseEdit = () => {
+      setPetToBeUpdate(null)
       setEdit(false);
     };
 
@@ -251,100 +258,91 @@ const PetHistory = () => {
                         <Box sx={{ ...phModal, width: '80%' }}>
                           <h2 id="parent-modal-title">Add new pet history</h2>
                           <Paper sx={{marginTop: 3, width: '100%', padding: 4}}>
-                      <form>
-                        <TextField m={{width:'100%'}}
-                                  variant="outlined" 
-                                  label='Owners Name' 
-                                  id="ownerName"
-                                  onChange={(e) => setOwnerName(e.target.value)} 
-                                  error={ownerNameErr}
-                                  sx={{width: '40%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
-                                  required 
-                                />
-                        <TextField m={{width:'100%'}}
-                                  variant="outlined" 
-                                  label='Pet Name' 
-                                  id="petName"
-                                  onChange={(e) => setPetName(e.target.value)}
-                                  error={petNameErr}  
-                                  sx={{width: '26%', marginBottom:'10px', marginRight:'2%'}}      
-                                  required 
-                                />
-                        <TextField m={{width:'100%'}}
-                                  variant="outlined" 
-                                  label='Pet Species' 
-                                  id="species" 
-                                  onChange={(e) => setSpecies(e.target.value)}
-                                  error={speciesErr}
-                                  sx={{width: '28%', marginBottom:'10px',}}      
-                                  required 
-                                />
-                        <TextField m={{width:'100%'}}
-                                  variant="outlined" 
-                                  label='Pet Breed' 
-                                  id="breed" 
-                                  onChange={(e) => setBreed(e.target.value)} 
-                                  error={breedErr}
-                                  sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
-                                  required 
-                                />
-                        <TextField m={{width:'100%'}}
-                                  variant="outlined" 
-                                  label='Age' 
-                                  id="age" 
-                                  value={age}
-                                  onChange={(e) => setAge(e.target.value)} 
-                                  error={ageErr}
-                                  sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}      
-                                  required 
-                                />
-                        <FormControl className='frmctrl'>
-                          <FormLabel >Gender</FormLabel>
-                          <RadioGroup
-                            row
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            id="gender"
-                            onChange={(e) => setGender(e.target.value)}
-                            error={genderErr}
-                          >
-                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                          </RadioGroup>
-                        </FormControl> 
-                        <TextField m={{width:'100%'}}
-                                  variant="outlined" 
-                                  label='Remarks' 
-                                  onChange={(e) => {setRemarks(e.target.value)}}
-                                  error={remarksErr}
-                                  id="remarks" 
-                                  sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}
-                                  required 
-                                />
-                        <TextField m={{width:'100%'}}
-                                  type='datetime-local'
-                                  variant="outlined" 
-                                  id="date" 
-                                  onChange={(e) => {setDate(e.target.value)}}
-                                  error={dateErr}
-                                  sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}      
-                                  required 
-                                />       
-                        <TextField 
-                                  variant="outlined" 
-                                  label='Pet health history' 
-                                  id="healthHistory" 
-                                  onChange={(e) => {setHealthHistory(e.target.value)}}
-                                  error={healthHistoryErr}
-                                  multiline rows={6}
-                                  sx={{width: '98%', marginBottom:'10px', marginLeft:'1%'}}      
-                                  required 
-                                />
+                            <form>
+                              <TextField m={{width:'100%'}}
+                                        variant="outlined" 
+                                        label='Owners Name' 
+                                        id="ownerName"
+                                        onChange={(e) => setOwnerName(e.target.value)}
+                                        sx={{width: '40%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
+                                        required 
+                                      />
+                              <TextField m={{width:'100%'}}
+                                        variant="outlined" 
+                                        label='Pet Name' 
+                                        id="petName"
+                                        onChange={(e) => setPetName(e.target.value)} 
+                                        sx={{width: '26%', marginBottom:'10px', marginRight:'2%'}}      
+                                        required 
+                                      />
+                              <TextField m={{width:'100%'}}
+                                        variant="outlined" 
+                                        label='Pet Species' 
+                                        id="species" 
+                                        onChange={(e) => setSpecies(e.target.value)}
+                                        sx={{width: '28%', marginBottom:'10px',}}      
+                                        required 
+                                      />
+                              <TextField m={{width:'100%'}}
+                                        variant="outlined" 
+                                        label='Pet Breed' 
+                                        id="breed" 
+                                        onChange={(e) => setBreed(e.target.value)}
+                                        sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
+                                        required 
+                                      />
+                              <TextField m={{width:'100%'}}
+                                        variant="outlined" 
+                                        label='Age' 
+                                        id="age" 
+                                        value={age}
+                                        onChange={(e) => setAge(e.target.value)} 
+                                        sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}      
+                                        required 
+                                      />
+                              <FormControl className='frmctrl'>
+                                <FormLabel >Gender</FormLabel>
+                                <RadioGroup
+                                  row
+                                  aria-labelledby="demo-row-radio-buttons-group-label"
+                                  name="row-radio-buttons-group"
+                                  id="gender"
+                                  onChange={(e) => setGender(e.target.value)}
+                                >
+                                  <FormControlLabel value="male" control={<Radio />} label="Male" />
+                                  <FormControlLabel value="female" control={<Radio />} label="Female" />
+                                </RadioGroup>
+                              </FormControl> 
+                              <TextField m={{width:'100%'}}
+                                        variant="outlined" 
+                                        label='Remarks' 
+                                        onChange={(e) => {setRemarks(e.target.value)}}
+                                        id="remarks" 
+                                        sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}
+                                        required 
+                                      />
+                              <TextField m={{width:'100%'}}
+                                        type='datetime-local'
+                                        variant="outlined" 
+                                        id="date" 
+                                        onChange={(e) => {setDate(e.target.value)}}
+                                        sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}      
+                                        required 
+                                      />       
+                              <TextField 
+                                        variant="outlined" 
+                                        label='Pet health history' 
+                                        id="healthHistory" 
+                                        onChange={(e) => {setHealthHistory(e.target.value)}}
+                                        multiline rows={6}
+                                        sx={{width: '98%', marginBottom:'10px', marginLeft:'1%'}}      
+                                        required 
+                                      />
 
-                        <Button variant='contained' color='success' onClick={addPetHistory} startIcon={<AddBoxIcon />} >Add pet history</Button>
-                        <Button variant='contained' type='reset' sx={{margin: '0 5px'}} >Clear</Button>
-                        <Button variant='contained' color='error' onClick={handleClose}>Cancel</Button>
-                      </form>
+                              <Button variant='contained' color='success' onClick={addPetHistory} startIcon={<AddBoxIcon />} >Add pet history</Button>
+                              <Button variant='contained' type='reset' sx={{margin: '0 5px'}} >Clear</Button>
+                              <Button variant='contained' color='error' onClick={handleClose}>Cancel</Button>
+                            </form>
                     </Paper>
                         </Box>
                       </Modal>
@@ -356,55 +354,49 @@ const PetHistory = () => {
                         aria-describedby="parent-modal-description"
                       >
                         <Box sx={{ ...phModal, width: '80%' }}>
-                          <h2 id="parent-modal-title">Add new pet history</h2>
+                          <h2 id="parent-modal-title">Update pet history {petToBeUpdate?.ownerName}</h2>
                           <Paper sx={{marginTop: 3, width: '100%', padding: 4}}>
                       <form>
                         <TextField m={{width:'100%'}}
                                   variant="outlined" 
                                   label='Owners Name' 
                                   id="ownerName"
-                                  onChange={(e) => setOwnerName(e.target.value)} 
-                                  error={ownerNameErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, ownerName: e.target.value})}
                                   sx={{width: '40%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
-                                  value={(e) => e.target.ownerName}
-                                  disabled
+                                  value={petToBeUpdate?.ownerName}
                                 />
                         <TextField m={{width:'100%'}}
                                   variant="outlined" 
                                   label='Pet Name' 
                                   id="petName"
-                                  onChange={(e) => setPetName(e.target.value)}
-                                  error={petNameErr}  
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, petName: e.target.value})}
                                   sx={{width: '26%', marginBottom:'10px', marginRight:'2%'}}      
                                   value="disabled"
-                                  disabled
+                                  disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
                                   variant="outlined" 
                                   label='Pet Species' 
                                   id="species" 
-                                  onChange={(e) => setSpecies(e.target.value)}
-                                  error={speciesErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, species: e.target.value})}
                                   sx={{width: '28%', marginBottom:'10px',}}      
                                   value="disabled"
-                                  disabled
+                                  disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
                                   variant="outlined" 
                                   label='Pet Breed' 
                                   id="breed" 
-                                  onChange={(e) => setBreed(e.target.value)} 
-                                  error={breedErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, breed: e.target.value})} 
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
                                   value="disabled"
-                                  disabled
+                                  disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
                                   variant="outlined" 
                                   label='Age' 
                                   id="age" 
-                                  onChange={(e) => setAge(e.target.value)} 
-                                  error={ageErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, age: e.target.value})} 
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}   
                                   required 
                                 />
@@ -415,9 +407,8 @@ const PetHistory = () => {
                             aria-labelledby="demo-row-radio-buttons-group-label"
                             name="row-radio-buttons-group"
                             id="gender"
-                            onChange={(e) => setGender(e.target.value)}
-                            error={genderErr}
-                            disabled
+                            onChange={(e) => setPetToBeUpdate({...petToBeUpdate, gender: e.target.value})}
+                            disabled ={true}
                           >
                             <FormControlLabel value="male" control={<Radio />} disabled label="Male" />
                             <FormControlLabel value="female" control={<Radio />} disabled label="Female" />
@@ -426,19 +417,17 @@ const PetHistory = () => {
                         <TextField m={{width:'100%'}}
                                   variant="outlined" 
                                   label='Remarks' 
-                                  onChange={(e) => {setRemarks(e.target.value)}}
-                                  error={remarksErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, remarks: e.target.value})}
                                   id="remarks" 
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}
                                   value='disable'
-                                  disabled
+                                  disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
                                   type='datetime-local'
                                   variant="outlined" 
                                   id="date" 
-                                  onChange={(e) => {setDate(e.target.value)}}
-                                  error={dateErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, date: e.target.value})}
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}
                                   value={petHistoryCollectionRef.age}      
                                   required 
@@ -447,14 +436,13 @@ const PetHistory = () => {
                                   variant="outlined" 
                                   label='Pet health history' 
                                   id="healthHistory" 
-                                  onChange={(e) => {setHealthHistory(e.target.value)}}
-                                  error={healthHistoryErr}
+                                  onChange={(e) => setPetToBeUpdate({...petToBeUpdate, healthHistory: e.target.value})}
                                   multiline rows={6}
                                   sx={{width: '98%', marginBottom:'10px', marginLeft:'1%'}}      
                                   required 
                                 />
 
-                        <Button variant='contained' color='success' startIcon={<AddBoxIcon />} >Edit history</Button>
+                        <Button variant='contained' color='success' startIcon={<AddBoxIcon />} onClick={() => {updatePetHistoryService(petToBeUpdate.id, petToBeUpdate)}} > Edit history </Button>
                         <Button variant='contained' type='reset' sx={{margin: '0 5px'}} >Clear</Button>
                         <Button variant='contained' color='error' onClick={handleCloseEdit}>Cancel</Button>
                       </form>
@@ -483,7 +471,7 @@ const PetHistory = () => {
                             ? history.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : history
                           ).map((pet) => (
-                          <TableRow key={pet.name}>
+                          <TableRow key={pet.id}>
                             <TableCell align="left">{pet.ownerName}</TableCell>
                             <TableCell align="left">{pet.petName}</TableCell>
                             <TableCell align="left">{pet.species}</TableCell>
@@ -494,7 +482,7 @@ const PetHistory = () => {
                             <TableCell align="right">{pet.date}</TableCell> 
                             <TableCell align="center" width='35%'>{pet.healthHistory}</TableCell>
                             <TableCell align="left">
-                              <IconButton sx={editStyle} onClick={() => {handleOpen(pet.id, pet.age, pet.healthHistory)}}>Edit<EditIcon fontSize='small'/></IconButton> 
+                              <IconButton sx={editStyle} onClick={() => {handleOpenEdit(pet)}}>Edit<EditIcon fontSize='small'/></IconButton> 
                               <IconButton sx={deleteStyle} onClick={() => {deleteHistory(pet.id)}} >Delete<DeleteIcon fontSize='small'/></IconButton>
                             </TableCell>
                           </TableRow>
