@@ -371,7 +371,7 @@ const PetHistory = () => {
                                   id="petName"
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, petName: e.target.value})}
                                   sx={{width: '26%', marginBottom:'10px', marginRight:'2%'}}      
-                                  value="disabled"
+                                  value={petToBeUpdate?.petName}
                                   disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
@@ -380,7 +380,7 @@ const PetHistory = () => {
                                   id="species" 
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, species: e.target.value})}
                                   sx={{width: '28%', marginBottom:'10px',}}      
-                                  value="disabled"
+                                  value={petToBeUpdate?.species}
                                   disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
@@ -389,7 +389,7 @@ const PetHistory = () => {
                                   id="breed" 
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, breed: e.target.value})} 
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}      
-                                  value="disabled"
+                                  value={petToBeUpdate?.breed}
                                   disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
@@ -397,7 +397,8 @@ const PetHistory = () => {
                                   label='Age' 
                                   id="age" 
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, age: e.target.value})} 
-                                  sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}   
+                                  sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}
+                                  value={petToBeUpdate?.age}   
                                   required 
                                 />
                         <FormControl className='frmctrl'>
@@ -420,7 +421,7 @@ const PetHistory = () => {
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, remarks: e.target.value})}
                                   id="remarks" 
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%', marginLeft:'1%'}}
-                                  value='disable'
+                                  value={petToBeUpdate?.gender}
                                   disabled ={true}
                                 />
                         <TextField m={{width:'100%'}}
@@ -429,7 +430,7 @@ const PetHistory = () => {
                                   id="date" 
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, date: e.target.value})}
                                   sx={{width: '30%', marginBottom:'10px', marginRight:'2%'}}
-                                  value={petHistoryCollectionRef.age}      
+                                  value={petToBeUpdate?.date}   
                                   required 
                                 />       
                         <TextField 
@@ -438,7 +439,8 @@ const PetHistory = () => {
                                   id="healthHistory" 
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, healthHistory: e.target.value})}
                                   multiline rows={6}
-                                  sx={{width: '98%', marginBottom:'10px', marginLeft:'1%'}}      
+                                  sx={{width: '98%', marginBottom:'10px', marginLeft:'1%'}}
+                                  value={petToBeUpdate?.petHistory}
                                   required 
                                 />
 
