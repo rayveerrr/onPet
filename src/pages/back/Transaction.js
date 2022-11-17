@@ -195,14 +195,16 @@ const PetHistory = () => {
                           ).map((order) => (
                           <TableRow key={order.id}>
                             <TableCell align="left">{order.id}</TableCell>
-                            <TableCell align="left">{order.UserID}</TableCell>
+                            <TableCell align="left">{order.Email}</TableCell>
                             <TableCell align="left">{order.OrderNumber}</TableCell>
                             <TableCell align="left">{order.ProdID}</TableCell>
                             <TableCell align="left">{order.Quantity}</TableCell>
                             <TableCell align="left">{order.totalAmount}</TableCell>
-                            <TableCell align="left"></TableCell>
+                            <TableCell align="left">{order.Payment}</TableCell>
                             <TableCell align="right">{order.Status}</TableCell> 
                             <TableCell align="left">
+                              {/* Aayusin ko pa kapag same order number dapat iisang table lang, bali ang gagawin ko isang table per same order number tapos dapat hindi kasama sa loop yung mga button. Tapos kapag pinindot si button dapat mag uupdate na lahat ng status ng may same order number according sa pipinduting button
+                              ang gagwin kong design ay parang receipt para maangas chariz hahahaha*/}
                               <IconButton sx={acceptStyle} onClick={() => submitUpdateStatusOrder(order.id, 'On Process')}>Accept<CheckIcon fontSize='small'/></IconButton> 
                               <IconButton sx={deleteStyle} onClick={() => submitUpdateStatusOrder(order.id, 'Rejected')}>Reject<DeleteIcon fontSize='small'/></IconButton>
                               <IconButton sx={editStyle} onClick={() => submitUpdateStatusOrder(order.id, 'Completed')}>Complete<DeleteIcon fontSize='small'/></IconButton>
@@ -236,8 +238,6 @@ const PetHistory = () => {
                       </TableFooter>
                     </Table>
                   </TableContainer>
-
-                  <Button variant='contained' color='success' onClick={handleOpen} startIcon={<AddBoxIcon />} sx={{float: 'right', margin: 3}}>Add pet history</Button>
                     {/* <div style={{ height: '40%', width: '80%'}}>
                       <DataGrid
                         rows={petRows}

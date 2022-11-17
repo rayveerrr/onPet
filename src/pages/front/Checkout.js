@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { collection, getDocs, addDoc } from 'firebase/firestore'
 import { db } from '../../firebase-config'
-import { Paper, Typography } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
 import Footer from '../../components/frontend/Footer'
 import Header from '../../components/frontend/Header'
 import '../../styles/checkout.css'
@@ -22,6 +22,7 @@ function Checkout() {
     const [ price, setPrice] = useState('');
     const [ quantity, setQuantity] = useState('');
     const [ order, setOrder] = useState([]);
+    const [ payment, setPayment] = useState('');
     const [ cart, setCart] = useState([]);
     const [ user, setUser ] = useState(null);
 
@@ -56,7 +57,9 @@ function Checkout() {
             OrderNumber: OrderNumber,
             Address: user.Address,
             Email: user.Email,
-            Status: 'OnProcess',
+            ProdName: cartItem.ProdName,
+            Payment: payment,
+            Status: 'On Request',
             ProdID: cartItem.ProdID,
             Quantity: cartItem.Quantity,
             totalAmount: cartItem.Price * cartItem.Quantity,
@@ -112,6 +115,20 @@ function Checkout() {
                             </>
                         );
                     })} <Paper elevation={5} sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 2}}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Select Payment method</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="category"
+                                    onChange={(e) => {setPayment(e.target.value)}}
+                                    label="Select Category"
+                                    defaultValue='cod'
+                                    value={payment}
+                                    sx={{marginRight: 5}}>
+                                    <MenuItem value='cod'>Cash on Delivery</MenuItem>
+                                    <MenuItem value='gcash'>G-Cash</MenuItem>
+                                </Select>
+                            </FormControl>
                             <Typography variant='h5' sx={{marginRight: 2}}> Total Amount: ₱ {sumOfPrice.toLocaleString()} </Typography>
                             <Button variant='contained' sx={{marginRight: 2, fontSize: 20, width: '20%'}} onClick={placeOrder}>
                                 Place Order

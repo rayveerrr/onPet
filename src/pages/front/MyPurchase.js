@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { db } from '../../firebase-config'
 import { getDocs, collection } from 'firebase/firestore'
@@ -42,10 +42,22 @@ function MyPurchase() {
     useEffect(() => {
         const getOrders = async () => {
         const data = await getDocs(ordersCollectionRef);
-        setOrders(data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(cartItem => cartItem.Email === sessionStorage.getItem('email')))
+        setOrders(data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(cartItem => (cartItem.Email === sessionStorage.getItem('email')) && cartItem.OrderNumber === cartItem.OrderNumber))
         }
         getOrders();
     }, []);
+
+    const sumOfPrice = useMemo(() => {
+        let totalAmount = 0;
+        orders.forEach(orderItem => totalAmount += orderItem.totalAmount * orderItem.Quantity)
+        return totalAmount;
+    }, [orders])
+
+    const orderStatus = useMemo(() => {
+        let Status = '';
+        orders.forEach(ordersStatus => Status = ordersStatus.Status)
+        return Status;
+    }, [orders])
   
 
     return (
@@ -60,34 +72,41 @@ function MyPurchase() {
                     <Link to="#">Completed</Link>
             </Paper>
             <div className="purchase-container">
-            {orders.map((order) => {
-                    return ( 
-                <div className="purchase-border">
-                    <div className="purchase-header">
-                        <h4>Status: {order.Status} </h4>
+            <div className="purchase-border">
+            <div className="purchase-header">
+                        <h4>Status: {orderStatus} </h4>
                     </div>
+            {orders.map((order) => {
+                return ( 
+                <>
+                    
                     <hr />
                     <div className="purchase">
                         <div className="img-container">
                             <img src={beefpro} alt="Product-image" />
                         </div>
+                        {/* ilalagay ko yung price ng product */}
                         <div className="product-details">
-                            <h3>{order.ProdID}</h3>
-                            <h4>{order.Quantity} </h4>
+                            <h3>{order.ProdName}</h3>
+                            <h4>Quantity: {order.Quantity} </h4>
                         </div>
                         <hr />
                         <div className="price">
-                            <p>{order.totalAmount}</p>
+                            <p>₱ {order.totalAmount.toLocaleString()}</p>
                         </div>
                     </div>
-                    <hr />
-                    <div className="total">
-                        <p>Order Total: <span>P123.00</span></p>
-                    </div>
-                </div>
+                </>
                 );
             })} 
+            <hr />
+                    <div className="total">
+                        <p>Order Total: <span> ₱ {sumOfPrice.toLocaleString()}</span></p>
+                    </div>
             </div>
+                    
+            </div>
+
+            
 
             
         </div>

@@ -9,6 +9,7 @@ import '../../index.css'
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase-config';
 import useAuthentication from '../../hooks/auth/authenticate-user';
+import { updateUserInfoService } from '../../data/firebase/services/user.service';
 
 // ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
 // ifilter mo yung email gamit ang sessionStorage.getItems('email') para isa lang nakukuhang information tapos tsaka mo gawin yung update.
@@ -35,6 +36,8 @@ const EditAdmin = () => {
 
     // useAuthentication('User')
 
+    const [userTobeUpdate, setUserTobeUpdate] = useState(null);
+
     const [registerEmail, setRegisterEmail] = useState('')
     const [registerPassword, setRegisterPassword] = useState('')
     const [name, setName] = useState('');
@@ -51,7 +54,7 @@ const EditAdmin = () => {
     useEffect(() => {
         const getUsers = async () => {
           const data = await getDocs(usersCollectionRef);
-          setUser(data.docs.map((doc) => ({...doc.data(), id: doc.id })))
+          setUser(data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(adminInfo => (adminInfo.Email === sessionStorage.getItem('email'))))
         }
         getUsers();
       }, []);
@@ -61,13 +64,16 @@ const EditAdmin = () => {
     const [navVisible, showNavbar] = useState(false);
 
     // Modal
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-      setOpen(true);
+    const [open, setOpen] = useState(false);
+    const handleOpen = (users) => {
+        setUserTobeUpdate(users)
+        setOpen(true);
     };
     const handleClose = () => {
-      setOpen(false);
+        setUserTobeUpdate(null)
+        setOpen(false);
     };
+    
   return (
     <div>
         <Navbar visible={ navVisible } show={ showNavbar } />
@@ -113,7 +119,6 @@ const EditAdmin = () => {
                                     aria-labelledby="gender"
                                     name="gender"
                                     value={users.Gender}
-                                    onChange={(e) => {setGender(e.target.value)}}
                                     disabled
                                 >
                                     <FormControlLabel value="female" control={<Radio />} label="Female" />
@@ -145,7 +150,7 @@ const EditAdmin = () => {
                                 value={users.Password} 
                                 disabled 
                             />
-                            <Button variant='contained' color='success' onClick={handleOpen} startIcon={<EditIcon />} sx={{margin: '20px 0'}}>Edit admin info</Button>
+                            <Button variant='contained' color='success' onClick={() => {handleOpen(name, gender, address, phoneNum, registerEmail, registerPassword )}} startIcon={<EditIcon />} sx={{margin: '20px 0'}}>Edit admin info</Button>
                             {/* Ilalagay ko to sa modal */}
                             {/* <TextField 
                                 variant="outlined" 
@@ -174,7 +179,8 @@ const EditAdmin = () => {
                                         label='Full Name' 
                                         id="fullname" 
                                         sx={{width: '48%', marginBottom:'10px', marginRight: '4%'}}
-                                        value={users.Name}  
+                                        value={userTobeUpdate?.Name}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}  
                                         multiline rows={1}   
                                     />
                                     <TextField 
@@ -182,7 +188,8 @@ const EditAdmin = () => {
                                         label='Email Address' 
                                         id="email" 
                                         sx={{width: '48%', marginBottom:'10px'}}
-                                        value={users.Email} 
+                                        value={userTobeUpdate?.Email}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Email: e.target.value})}
                                         multiline rows={1}  
                                     />
                                     <TextField 
@@ -190,7 +197,8 @@ const EditAdmin = () => {
                                         label='Phone Number' 
                                         id="phoneNum" 
                                         sx={{width: '48%', marginBottom:'10px'}}
-                                        value={users.PhoneNum} 
+                                        value={userTobeUpdate?.PhoneNum}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, PhoneNum: e.target.value})}
                                         multiline rows={1} 
                                     />
                                     <FormControl sx={{width: '60%', marginBottom:'10px'}}>
@@ -200,8 +208,8 @@ const EditAdmin = () => {
                                             row
                                             aria-labelledby="gender"
                                             name="gender"
-                                            value={users.Gender}
-                                            onChange={(e) => {setGender(e.target.value)}}
+                                            value={userTobeUpdate?.Gender}  
+                                            onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Gender: e.target.value})}
                                         >
                                             <FormControlLabel value="female" control={<Radio />} label="Female" />
                                             <FormControlLabel value="male" control={<Radio />} label="Male" />
@@ -221,31 +229,38 @@ const EditAdmin = () => {
                                         id="address"
                                         multiline rows={3} 
                                         sx={{width: '100%', marginBottom:'10px'}}
-                                        value={users.Address}    
+                                        value={userTobeUpdate?.Address}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Address: e.target.value})}
                                     />
                                     <TextField 
                                         type='password'
                                         variant="outlined"  
                                         id="currentPassword" 
                                         sx={{width: '48%', marginBottom:'10px', display:'flex'}}  
-                                        value={users.Password} 
+                                        value={userTobeUpdate?.Password}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Password: e.target.value})}
                                     />
                                     <TextField 
                                         variant="outlined" 
                                         label='New Password' 
                                         id="newPassword" 
-                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}}      
+                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}} 
+                                        value={userTobeUpdate?.Name}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}     
                                     />
                                     <TextField 
                                         variant="outlined" 
                                         label='Confirm New Password' 
                                         id="confirmPassword" 
-                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}}    
+                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}} 
+                                        value={userTobeUpdate?.Name}  
+                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}   
                                     />
                                     <Button 
                                         variant="contained"
                                         className='save-btn'
                                         sx={{marginBottom: 2}}
+                                        onClick={() => {updateUserInfoService(userTobeUpdate.id, userTobeUpdate)}}
                                     >
                                         Save Changes
                                     </Button> 
