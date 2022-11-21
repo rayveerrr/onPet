@@ -11,7 +11,7 @@ import useAuthentication from '../../hooks/auth/authenticate-user';
 
 function FBComment() {
 
-    useAuthentication('User')
+    useAuthentication('Admin')
     const [navVisible, showNavbar] = useState("false");
 
     const [ Name, setName] = useState('');

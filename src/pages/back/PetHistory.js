@@ -114,7 +114,7 @@ const PetHistory = () => {
   
     const petHistoryCollectionRef = collection(db, "petHistory");
   
-    useAuthentication('User')
+    useAuthentication('Admin')
 
     
     
