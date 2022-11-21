@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react"
 import { auth } from "../../firebase-config";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase-config";
-import { onAuthStateChanged } from "firebase/auth";
 
 const useAuthentication = (userType) => {
     

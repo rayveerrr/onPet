@@ -94,7 +94,7 @@ const ProductList = () => {
                                     <img src={beefpro} alt="Product-image" />
                                 </div>
                                 <Typography variant='h6' sx={{marginLeft: '15px'}}>{product.ProdName}</Typography>
-                                <Typography variant='subtitle1' sx={{marginLeft: '15px'}}>{product.Price}</Typography>
+                                <Typography variant='subtitle1' sx={{marginLeft: '15px'}}> ₱ {product.Price.toLocaleString()}</Typography>
                                 <Typography variant='body' sx={{marginLeft: '15px'}}>In Stock, {product.Quantity} Unit</Typography>
                             
                                 <CardActions disableSpacing>

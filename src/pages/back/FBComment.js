@@ -11,8 +11,8 @@ import useAuthentication from '../../hooks/auth/authenticate-user';
 
 function FBComment() {
 
-    // useAuthentication('User')
-    const [navVisible, showNavbar] = useState(false);
+    useAuthentication('User')
+    const [navVisible, showNavbar] = useState("false");
 
     const [ Name, setName] = useState('');
     const [ Date, setDate] = useState('');

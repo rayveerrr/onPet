@@ -1,5 +1,5 @@
 import  React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, setDoc, doc, deleteDoc } from 'firebase/firestore'
 import { db } from '../../firebase-config'
 
 // image
@@ -77,6 +77,12 @@ const Cart = () => {
             });
         }, [cart]) 
 
+        const removeFromCart = async (id) => {
+            const cartDoc = doc(db, "MyCart", id);
+            await deleteDoc(cartDoc)
+            alert('Item remove from cart')
+          }
+
 
         const sumOfPrice = useMemo(() => {
             let totalAmount = 0;
@@ -119,8 +125,6 @@ const Cart = () => {
             <div className="cart-container">
                 <Paper className="cart-header">
                     <div className="select-all">
-                        <input type="checkbox" name="cbSelectAll" id="cbSelectAll" />
-                        <label> Select All</label>
                     </div>
                     <div className="details">
                         <div className="box"><h4>Name</h4></div>
@@ -142,19 +146,22 @@ const Cart = () => {
                                 </div>
                                 <div className="box-2">
                                     <div className="box"><label id="name">{cart.ProdName}</label></div>
-                                    <div className="box"><label id="price">₱ {cart.Price}</label></div>
+                                    <div className="box"><label id="price"> ₱ {cart.Price}</label></div>
                                     {/* aayusin yung pag increase ng quantity */}
                                     <div className="box">
-                                        <IconButton aria-label="minus" onClick={() => decrement(cart.id)} disabled={cart.Quantity == 0} className='quantitybtn' >
+                                    <Typography variant='caption'>Maximum quantity is 10* </Typography>
+                                        <div>
+                                        <IconButton aria-label="minus" onClick={() => decrement(cart.id)} disabled={cart.Quantity == 1} className='quantitybtn' >
                                             <RemoveIcon   />
                                         </IconButton>
                                         <Input sx={{ backgroundColor: 'white', padding: '2px', margin: '0 2px'}} placeholder='0' value={cart.Quantity}/>
-                                        <IconButton aria-label="add" onClick={() => increment(cart.id)} className='quantitybtn' >
+                                        <IconButton aria-label="add" onClick={() => increment(cart.id)} disabled={cart.Quantity == 10} className='quantitybtn' >
                                             <AddIcon  endIcon={<AddIcon />}  />
                                         </IconButton> 
+                                        </div>
                                     </div>
                                     <div className="box"><label id="totalprice"> ₱ {(cart.Price * cart.Quantity).toLocaleString()}</label></div>
-                                    <div className="box"><button>Remove</button></div>
+                                    <div className="box"><Button onClick={() => {removeFromCart(cart.id)}}>Remove</Button></div>
                                 </div>
                             </Paper>
                             

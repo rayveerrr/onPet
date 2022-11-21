@@ -38,16 +38,13 @@ function App() {
             <Route path='/layout' element={<Layout/>} />
             <Route path='/feedback' element={<Feedback />} />
             <Route path='/checkout' element={<Checkout />} />
-            <Route path= '/admin' element={<Admin />} >
-              <Route path= '/admin/:id' element={<Navbar />} />
-              <Route path='/admin/editAdmin' element={<EditAdmin />} />
-              <Route path='/admin/orders' element={<Orders />} />
-              <Route path='/admin/supplies' element={<Supplies />} />
-              <Route path='/admin/petHistory' element={<PetHistory />} />
-              <Route path='/admin/addnewemployee' element={<AddNewEmployee />} />
-              <Route path='/admin/transactions' element={<Transaction />} />
-              <Route path='/admin/fbcomment' element={<FBComment />} />
-            </Route>
+            <Route path='/editAdmin' element={<EditAdmin />} />
+            <Route path='/orders' element={<Orders />} />
+            <Route path='/supplies' element={<Supplies />} />
+            <Route path='/pethistory' element={<PetHistory />} />
+            <Route path='/addnewemployee' element={<AddNewEmployee />} />
+            <Route path='/transactions' element={<Transaction />} />
+            <Route path='/fbcomment' element={<FBComment />} />
         </Routes>
     </>
   );

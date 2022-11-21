@@ -86,7 +86,7 @@ const SelectedProduct = () => {
 
     const data = await getDocs(cartCollectionRef);
     const cartItems = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    if (cartItems.find((cartItems) => cartItems.ProdID === params.id)) {
+    if (cartItems.find((cartItems) => cartItems.ProdID === params.id && cartItems.Email === sessionStorage.getItem("email"))) {
       return alert("Item already existing in cart.");
     }
     try {
@@ -142,6 +142,7 @@ const SelectedProduct = () => {
               {Number(product.Price).toLocaleString()}
             </p>
             <p>
+              <Typography variant='caption' sx={{color: 'gray'}}>Maximum quantity is 10* </Typography>
               <Stack direction="row" alignItems="center">
                 {" "}
                 Quantity:
@@ -157,7 +158,7 @@ const SelectedProduct = () => {
                   placeholder="0"
                   value={quantityCount}
                 ></Input>
-                <IconButton aria-label="add" onClick={increment}>
+                <IconButton aria-label="add" onClick={increment} disabled={quantityCount == 10}>
                   <AddIcon fontSize="small" sx={hoverStyle} />
                 </IconButton>
                 <IconButton variant="contained" endIcon={<AddIcon />} />
@@ -174,6 +175,7 @@ const SelectedProduct = () => {
                 Add to cart
               </Button>
             </div>
+            {/* Ididisplay ko din dito yung available stock */}
             <div className="payment-method">
               <h3>Payment method</h3>
               <div className="payment-container">

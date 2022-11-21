@@ -103,7 +103,7 @@ function Checkout() {
                                     </div>
                                     <div className="box-2">
                                         <div className="box"><label id="price">Name: {cart.ProdName}</label></div>
-                                        <div className="box"><label id="price">Price: {cart.Price}</label></div>
+                                        <div className="box"><label id="price">Price: ₱ {cart.Price}</label></div>
                                         
                                         <div className="box">
                                             <Typography sx={{ backgroundColor: 'white', padding: '2px', margin: '0 2px'}} placeholder='0' disabled> Quantity: {cart.Quantity} </Typography>  
@@ -129,6 +129,7 @@ function Checkout() {
                                     <MenuItem value='gcash'>G-Cash</MenuItem>
                                 </Select>
                             </FormControl>
+                            <Typography variant='caption' sx={{color: 'gray'}}> Shipping fee is not included to total amount. </Typography>
                             <Typography variant='h5' sx={{marginRight: 2}}> Total Amount: ₱ {sumOfPrice.toLocaleString()} </Typography>
                             <Button variant='contained' sx={{marginRight: 2, fontSize: 20, width: '20%'}} onClick={placeOrder}>
                                 Place Order

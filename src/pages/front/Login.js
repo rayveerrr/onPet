@@ -24,12 +24,17 @@ function Login() {
 
     const login = async () => {
         try {
-            
+            // kapag ang usertype ay user, sa user side lang diretso sa homepage. kapag admin naman ang usertype, diretso sa admin side.
             const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
             if(user){
                 sessionStorage.setItem('email', loginEmail)
-                window.location.href = "/homepage";
-                console.log(user)
+                
+                console.log(user.user.data())
+                // if(user.UserType === 'User'){
+                //     window.location.href = "/homepage";
+                // }else{
+                //     window.location.href = "/editAdmin";
+                // }
             }
         } catch (e) {
             alert('Invalid Credential')

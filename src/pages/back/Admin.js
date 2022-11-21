@@ -11,7 +11,7 @@ function Admin() {
 
       // useAuthentication('User')
     
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
   return (
     <div>
             <Navbar visible={ navVisible } show={ showNavbar } />

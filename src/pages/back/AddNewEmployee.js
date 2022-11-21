@@ -44,9 +44,9 @@ function AddNewEmployee() {
     }
   }
 
-  // useAuthentication('User')
+  useAuthentication('User')
 
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
 
   return (
     <div>

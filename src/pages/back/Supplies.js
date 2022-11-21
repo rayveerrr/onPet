@@ -76,7 +76,7 @@ const editStyle = {
 
 const Supplies = () => {
 
-  // useAuthentication('User')
+  useAuthentication('User')
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => {
@@ -86,7 +86,7 @@ const Supplies = () => {
       setOpen(false);
     };
 
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
 
     const orderStyle = {
         display: 'flex',
@@ -110,6 +110,7 @@ const Supplies = () => {
       const addProduct = async () => {
         try {
           await addDoc(productCollectionRef, {Category: category , Description: description , Price: price , ProdName: prodName , Quantity: quantity})
+          handleClose();
         }catch(e){
             console.log(e);
         }
@@ -186,8 +187,8 @@ const Supplies = () => {
   return (
     <div>
       <Navbar visible={ navVisible } show={ showNavbar } />
-        <div className={!navVisible ? "page" : "page page-with-navbar"} style={orderStyle}>
-          <Paper sx={{textAlign: 'center'}}>
+        <div className={!navVisible ? "page" : "page page-with-navbar"}>
+          <Paper sx={{textAlign: 'center', margin: '5% auto'}}>
             <Typography variant='h4' sx={{textAlign: 'center' }}>List of product</Typography>
             <TableContainer sx={{display: 'flex', justifyContent: 'center'}} >
               <Table sx={{ minWidth: 700, width: '100%' }} aria-label="customized table">

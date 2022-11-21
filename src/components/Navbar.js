@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import { NavLink, Outlet, useParams } from "react-router-dom";
 import "../styles/navbar.css";
+import pac from '../image/pawsandclaws.jpg'
 
 const ICON_SIZE = 20;
 
@@ -45,36 +46,36 @@ function Navbar({visible, show}) {
 						to="/admin"
 					>
 							<img
-								src={""}
+								src={pac}
 								alt="logo"
 							/>
 					</NavLink>
 					<div className="links nav-top">
-					<NavLink to="/admin/editAdmin" className="nav-link">
+					<NavLink to="/editAdmin" className="nav-link">
 							<FaThLarge size={ICON_SIZE} />
 							<span>Edit Admin</span>
 						</NavLink>
-						<NavLink to="/admin/orders" className="nav-link">
+						<NavLink to="/orders" className="nav-link">
 							<FaShoppingCart size={ICON_SIZE} />
-							<span>Orders</span> 
+							<span>Purchased History</span> 
 						</NavLink>
-                        <NavLink to="/admin/supplies" className="nav-link">
+                        <NavLink to="/supplies" className="nav-link">
 						<FaBoxes size={ICON_SIZE} />
 							<span>Supplies</span>
 						</NavLink>
-                        <NavLink to="/admin/transactions" className="nav-link">
+                        <NavLink to="/transactions" className="nav-link">
 							<FaReceipt size={ICON_SIZE} />
 							<span>Transactions</span>
 						</NavLink>
-                        <NavLink to="/admin/pethistory" className="nav-link">
+                        <NavLink to="/pethistory" className="nav-link">
 							<FaRegClipboard size={ICON_SIZE} />
 							<span>Record pet history</span>
 						</NavLink>
-                        <NavLink to="/admin/addnewemployee" className="nav-link">
+                        <NavLink to="/addnewemployee" className="nav-link">
 							<FaRegUserCircle size={ICON_SIZE} />
 							<span>Add new employee</span>
 						</NavLink>
-						<NavLink to="/admin/fbcomment" className="nav-link">
+						<NavLink to="/fbcomment" className="nav-link">
 							<FaChartBar size={ICON_SIZE} />
 							<span>Feedback </span>
 						</NavLink>
@@ -83,7 +84,7 @@ function Navbar({visible, show}) {
 				</div>
 
 				<div className="links">
-					<NavLink to="/Sign-out" className="nav-link">
+					<NavLink to="/login" className="nav-link">
 						<FaSignOutAlt size={ICON_SIZE} />
 						<span>Logout</span> 
 					</NavLink>

@@ -126,7 +126,7 @@ const PetHistory = () => {
       getOrders();
     }, []);
 
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
 
     const orderStyle = {
         display: 'flex',
@@ -160,7 +160,7 @@ const PetHistory = () => {
     <div>
         <Navbar visible={ navVisible } show={ showNavbar } />
         <div className={!navVisible ? "page" : "page page-with-navbar"}>
-                <Paper elevation={3} sx={{width: '90%', margin: 'auto'}}>
+                <Paper elevation={3} sx={{width: '90%', margin: '5% auto'}}>
                     <Typography variant='h4' sx={{marginLeft: '1%',}}>List of Order request</Typography>
                       
                       <Modal
@@ -174,7 +174,7 @@ const PetHistory = () => {
                     </Paper>
                         </Box>
                       </Modal>
-                    <TableContainer sx={{display: 'flex', justifyContent: 'center', height: 300}} >
+                    <TableContainer sx={{display: 'flex', justifyContent: 'center'}} >
                     <Table sx={{ minWidth: 700, width: '100%' }} aria-label="customized table">
                       <TableHead sx={{bgcolor: 'black'}}>
                         <TableRow>

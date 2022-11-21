@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Paper, Typography } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore'
   import {auth, db} from '../../firebase-config'
 
@@ -26,13 +25,6 @@ import Table from '@mui/material/Table';
   import Modal from '@mui/material/Modal';
 import useAuthentication from '../../hooks/auth/authenticate-user';
 import { updatePetHistoryService } from '../../data/firebase/services/petHistory.service';
-
-  // Hindi pa tapos si update, hindi ko magawa potek
-  // Hindi pa tapos si update, hindi ko magawa potek
-  // Hindi pa tapos si update, hindi ko magawa potek
-  // Hindi pa tapos si update, hindi ko magawa potek
-  // Hindi pa tapos si update, hindi ko magawa potek
-  // Hindi pa tapos si update, hindi ko magawa potek
 
   const editStyle = {
     bgcolor: 'green',
@@ -122,53 +114,9 @@ const PetHistory = () => {
   
     const petHistoryCollectionRef = collection(db, "petHistory");
   
-    // useAuthentication('User')
+    useAuthentication('User')
 
-    // add new data
-    const addPetHistory = async () => {
-  
-      setAgeErr("false")
-      setBreedErr("false")
-      setGenderErr("false")
-      setDateErr("false")
-      setOwnerNameErr("false")
-      setPetNameErr("false")
-      setRemarksErr("false")
-      setSpeciesErr("false")
-      setHealthHistoryErr("false")
-      if( age == ''){
-        setAgeErr(true)
-      }
-      if( breed == ''){
-          setBreedErr(true)
-      }
-      if( gender == ''){
-          setGenderErr(true)
-      }
-      if( date == ''){
-          setDateErr(true)
-      }
-      if( ownerName == ''){
-          setOwnerNameErr(true)
-      }
-      if( petName == ''){
-          setPetNameErr(true)
-      }
-      if( remarks == ''){
-        setRemarksErr(true)
-      }
-      if( species == ''){
-        setSpeciesErr(true)
-      }
-      if( healthHistory == ''){
-        setHealthHistoryErr(true)
-      }
-        try {
-            const petHistory = await addDoc(petHistoryCollectionRef, {age: age, breed: breed, date: date, gender: gender, ownerName: ownerName, petName: petName, remarks: remarks, species: species, healthHistory: healthHistory});
-        } catch (e) {
-            console.log(e.message);
-        }
-    }
+    
     
     // Read data
     useEffect(() => {
@@ -225,10 +173,6 @@ const PetHistory = () => {
       await deleteDoc(historyDoc)
     }
 
-    if(handleOpen == true){
-      
-    }
-
     // Modal  for Edit
     const [edit, setEdit] = useState(false);
     const handleOpenEdit = (pet) => {
@@ -241,11 +185,58 @@ const PetHistory = () => {
       setEdit(false);
     };
 
+    // add new data
+    const addPetHistory = async () => {
+  
+      setAgeErr("false")
+      setBreedErr("false")
+      setGenderErr("false")
+      setDateErr("false")
+      setOwnerNameErr("false")
+      setPetNameErr("false")
+      setRemarksErr("false")
+      setSpeciesErr("false")
+      setHealthHistoryErr("false")
+      if( age == ''){
+        setAgeErr(true)
+      }
+      if( breed == ''){
+          setBreedErr(true)
+      }
+      if( gender == ''){
+          setGenderErr(true)
+      }
+      if( date == ''){
+          setDateErr(true)
+      }
+      if( ownerName == ''){
+          setOwnerNameErr(true)
+      }
+      if( petName == ''){
+          setPetNameErr(true)
+      }
+      if( remarks == ''){
+        setRemarksErr(true)
+      }
+      if( species == ''){
+        setSpeciesErr(true)
+      }
+      if( healthHistory == ''){
+        setHealthHistoryErr(true)
+      }
+        try {
+            const petHistory = await addDoc(petHistoryCollectionRef, {age: age, breed: breed, date: date, gender: gender, ownerName: ownerName, petName: petName, remarks: remarks, species: species, healthHistory: healthHistory});
+            handleClose();
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
   return (
     <div>
         <Navbar visible={ navVisible } show={ showNavbar } />
         <div className={!navVisible ? "page" : "page page-with-navbar"}>
-                <Paper elevation={3} sx={{width: '90%', margin: 'auto'}}>
+                <Paper elevation={3} sx={{width: '90%', margin: '5% auto'}}>
                     <Typography variant='h4' sx={{marginLeft: '1%',}}>Pet History</Typography>
                       
                       {/* This modal is for adding pet history */}
@@ -440,7 +431,7 @@ const PetHistory = () => {
                                   onChange={(e) => setPetToBeUpdate({...petToBeUpdate, healthHistory: e.target.value})}
                                   multiline rows={6}
                                   sx={{width: '98%', marginBottom:'10px', marginLeft:'1%'}}
-                                  value={petToBeUpdate?.petHistory}
+                                  value={petToBeUpdate?.healthHistory}
                                   required 
                                 />
 

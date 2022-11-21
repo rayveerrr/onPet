@@ -59,22 +59,22 @@ const deleteStyle = {
 
 
 const data = [
-    { id: 1, itemName: 'name', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'image'},
-    { id: 2, itemName: 'Ongoing', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'image'},
-    { id: 3, itemName: 'Ongoing', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'Ongoing'},
-    { id: 4, itemName: 'Ongoing', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'Ongoing'},
-    { id: 5, itemName: 'Ongoing', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'Ongoing'},
-    { id: 6, itemName: 'Ongoing', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'Ongoing'},
-    { id: 7 , itemName: 'Ongoing', description: 'Ongoing', price: 'Ongoing', quantity: 'Ongoing', image: 'Ongoing'},
+    { id: 1, orderNumber: '1234', Username: 'Leenard Taboy', Status: 'Completed', TotalAmount: '10000'},
+    { id: 2, orderNumber: '1235', Username: 'Ric Angelo Aristosa', Status: 'Completed', TotalAmount: '3000'},
+    { id: 3, orderNumber: '2314', Username: 'Gio Matthew Bayna', Status: 'Completed', TotalAmount: '10000'},
+    { id: 4, orderNumber: '5323', Username: 'Jarl Renzo Naguit', Status: 'Rejected', TotalAmount: '2315'},
+    { id: 5, orderNumber: '1263', Username: 'Reyver Bautista', Status: 'Completed', TotalAmount: '7531'},
+    { id: 6, orderNumber: '3013', Username: 'Pedro Penduko', Status: 'Rejected', TotalAmount: '300'},
+    { id: 7, orderNumber: '4312', Username: 'Coco Martin', Status: 'Completed', TotalAmount: '100'},
   ]
 
 
 
 const Orders = () => {
 
-  // useAuthentication('User')
+  useAuthentication('User')
 
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
 
     const orderStyle = {
         display: 'flex',
@@ -101,18 +101,17 @@ const Orders = () => {
         <div>
             <Navbar visible={ navVisible } show={ showNavbar } />
             <div className={!navVisible ? "page" : "page page-with-navbar"} style={orderStyle}>
-            <Paper sx={{textAlign: 'center'}}>
-            <Typography variant='h4' sx={{textAlign: 'center' }}>Orders</Typography>
+            <Paper sx={{textAlign: 'center', margin:'5% auto'}}>
+            <Typography variant='h4' sx={{textAlign: 'center' }}>Purchased History</Typography>
             <TableContainer sx={{display: 'flex', justifyContent: 'center'}} >
               <Table sx={{ minWidth: 700, width: '100%' }} aria-label="customized table">
                 <TableHead sx={{bgcolor: 'black'}}>
                   <TableRow>
-                    <TableCell sx={{color: 'white'}}>Item ID</TableCell>
-                    <TableCell align="right" sx={{color: 'white'}}>Order ID</TableCell>
-                    <TableCell align="right" sx={{color: 'white'}}>User ID</TableCell>
-                    <TableCell align="right" sx={{color: 'white'}}>Order Details ID</TableCell>
-                    <TableCell align="right" sx={{color: 'white'}}>Prod ID</TableCell>
-                    <TableCell align="right" sx={{color: 'white'}}>Total Price</TableCell>
+                    <TableCell sx={{color: 'white'}}>Purchased History ID</TableCell>
+                    <TableCell align="left" sx={{color: 'white'}}>Order Number</TableCell>
+                    <TableCell align="left" sx={{color: 'white'}}>Username</TableCell>
+                    <TableCell align="left" sx={{color: 'white'}}>Status</TableCell>
+                    <TableCell align="left" sx={{color: 'white'}}>Total Amount</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{(rowsPerPage > 0
@@ -123,11 +122,10 @@ const Orders = () => {
                       <TableCell component="th" scope="row">
                         {row.id}
                       </TableCell>
-                      <TableCell align="right">{row.itemName}</TableCell>
-                      <TableCell align="right">{row.description}</TableCell>
-                      <TableCell align="right">{row.price}</TableCell>
-                      <TableCell align="right">{row.quantity}</TableCell>
-                      <TableCell align="right">{row.image}</TableCell>
+                      <TableCell align="left">{row.orderNumber}</TableCell>
+                      <TableCell align="left">{row.Username}</TableCell>
+                      <TableCell align="left">{row.Status}</TableCell>
+                      <TableCell align="left">{row.TotalAmount}</TableCell>
                     </TableRow>
                   ))}
                   {emptyRows > 0 && (

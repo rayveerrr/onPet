@@ -73,8 +73,7 @@ function SignUp() {
         if( cpass == ''){
             setCPassError(true)
         }
-
-
+        
         if (name && registerEmail && gender && phoneNum  && registerPassword && cpass){
             console.log(name, registerEmail, gender, phoneNum, registerPassword, cpass)
         }

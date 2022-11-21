@@ -50,8 +50,7 @@
 
 .main .product-container .availability-container .button{
     width: 80%;
-    margin: auto;
-    margin-top: 0;
+    margin: 2px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -73,11 +72,13 @@
 .main .product-container .availability-container .payment-method{
     width: 80%;
     margin: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .main .product-container .availability-container .payment-method h3{
     color: var(--white);
-    margin-top: -30px;
+    margin-bottom: 5px;
 }
 
 .main .product-container .availability-container .payment-method .payment-container{
@@ -89,7 +90,6 @@
     width: 60px;
     height: 30px;
     border: 1px white solid;
-    margin-top: -15px;
 }
 
 .main .product-container .availability-container .payment-method .payment-container .payment img{

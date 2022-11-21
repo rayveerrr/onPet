@@ -34,7 +34,7 @@ const editAdminModal = {
 
 const EditAdmin = () => {
 
-    // useAuthentication('User')
+    useAuthentication('User')
 
     const [userTobeUpdate, setUserTobeUpdate] = useState(null);
 
@@ -61,7 +61,7 @@ const EditAdmin = () => {
 
     
 
-    const [navVisible, showNavbar] = useState(false);
+    const [navVisible, showNavbar] = useState("false");
 
     // Modal
     const [open, setOpen] = useState(false);
@@ -78,7 +78,7 @@ const EditAdmin = () => {
     <div>
         <Navbar visible={ navVisible } show={ showNavbar } />
         <div className={!navVisible ? "page" : "page page-with-navbar"}>
-            <Paper elevation={3} sx={{width: '80%', margin: 'auto'}}>
+            <Paper elevation={3} sx={{width: '80%', margin: '5% auto'}}>
             <Typography variant='h4' sx={{textAlign: 'center', margin: 2}}>My account</Typography>
                 <form style={{width: '80%', margin: 'auto'}}>
                 {user.map((users) => {
@@ -150,7 +150,7 @@ const EditAdmin = () => {
                                 value={users.Password} 
                                 disabled 
                             />
-                            <Button variant='contained' color='success' onClick={() => {handleOpen(name, gender, address, phoneNum, registerEmail, registerPassword )}} startIcon={<EditIcon />} sx={{margin: '20px 0'}}>Edit admin info</Button>
+                            <Button variant='contained' color='success' onClick={() => {handleOpen(users)}} startIcon={<EditIcon />} sx={{margin: '20px 0'}}>Edit admin info</Button>
                             {/* Ilalagay ko to sa modal */}
                             {/* <TextField 
                                 variant="outlined" 
@@ -167,110 +167,110 @@ const EditAdmin = () => {
                                 required 
                             /> */}
                             
-                            <Modal
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="parent-modal-title"
-                                aria-describedby="parent-modal-description"
-                                >
-                                <Box sx={{ ...editAdminModal, width: '60%' }}>
-                                    <TextField m={{width:'100%'}}
-                                        variant="outlined" 
-                                        label='Full Name' 
-                                        id="fullname" 
-                                        sx={{width: '48%', marginBottom:'10px', marginRight: '4%'}}
-                                        value={userTobeUpdate?.Name}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}  
-                                        multiline rows={1}   
-                                    />
-                                    <TextField 
-                                        variant="outlined" 
-                                        label='Email Address' 
-                                        id="email" 
-                                        sx={{width: '48%', marginBottom:'10px'}}
-                                        value={userTobeUpdate?.Email}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Email: e.target.value})}
-                                        multiline rows={1}  
-                                    />
-                                    <TextField 
-                                        variant="outlined" 
-                                        label='Phone Number' 
-                                        id="phoneNum" 
-                                        sx={{width: '48%', marginBottom:'10px'}}
-                                        value={userTobeUpdate?.PhoneNum}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, PhoneNum: e.target.value})}
-                                        multiline rows={1} 
-                                    />
-                                    <FormControl sx={{width: '60%', marginBottom:'10px'}}>
-                                        <FormLabel id="gender" 
-                                        >Gender</FormLabel>
-                                        <RadioGroup
-                                            row
-                                            aria-labelledby="gender"
-                                            name="gender"
-                                            value={userTobeUpdate?.Gender}  
-                                            onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Gender: e.target.value})}
-                                        >
-                                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                                            <FormControlLabel value="other" control={<Radio />} label="Other" />
-                                            {/* palatandaan kung pano mag disable ng radiobutton */}
-                                            {/* <FormControlLabel
-                                            value="disabled"
-                                            disabled
-                                            control={<Radio />}
-                                            label="other"
-                                            /> */}
-                                        </RadioGroup>
-                                    </FormControl>
-                                    <TextField 
-                                        variant="outlined" 
-                                        label='Address' 
-                                        id="address"
-                                        multiline rows={3} 
-                                        sx={{width: '100%', marginBottom:'10px'}}
-                                        value={userTobeUpdate?.Address}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Address: e.target.value})}
-                                    />
-                                    <TextField 
-                                        type='password'
-                                        variant="outlined"  
-                                        id="currentPassword" 
-                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}}  
-                                        value={userTobeUpdate?.Password}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Password: e.target.value})}
-                                    />
-                                    <TextField 
-                                        variant="outlined" 
-                                        label='New Password' 
-                                        id="newPassword" 
-                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}} 
-                                        value={userTobeUpdate?.Name}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}     
-                                    />
-                                    <TextField 
-                                        variant="outlined" 
-                                        label='Confirm New Password' 
-                                        id="confirmPassword" 
-                                        sx={{width: '48%', marginBottom:'10px', display:'flex'}} 
-                                        value={userTobeUpdate?.Name}  
-                                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}   
-                                    />
-                                    <Button 
-                                        variant="contained"
-                                        className='save-btn'
-                                        sx={{marginBottom: 2}}
-                                        onClick={() => {updateUserInfoService(userTobeUpdate.id, userTobeUpdate)}}
-                                    >
-                                        Save Changes
-                                    </Button> 
-                                </Box>
-                            </Modal>
+                            
                         </div>
                     );
                     })} 	      
                 </form>
             </Paper>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="parent-modal-title"
+                aria-describedby="parent-modal-description"
+                >
+                <Box sx={{ ...editAdminModal, width: '60%' }}>
+                    <TextField m={{width:'100%'}}
+                        variant="outlined" 
+                        label='Full Name' 
+                        id="fullname" 
+                        sx={{width: '48%', marginBottom:'10px', marginRight: '4%'}}
+                        value={userTobeUpdate?.Name}  
+                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Name: e.target.value})}  
+                        multiline rows={1}   
+                    />
+                    <TextField 
+                        variant="outlined" 
+                        label='Email Address' 
+                        id="email" 
+                        sx={{width: '48%', marginBottom:'10px'}}
+                        value={userTobeUpdate?.Email}  
+                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Email: e.target.value})}
+                        multiline rows={1}  
+                    />
+                    <TextField 
+                        variant="outlined" 
+                        label='Phone Number' 
+                        id="phoneNum" 
+                        sx={{width: '48%', marginBottom:'10px'}}
+                        value={userTobeUpdate?.PhoneNum}  
+                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, PhoneNum: e.target.value})}
+                        multiline rows={1} 
+                    />
+                    <FormControl sx={{width: '60%', marginBottom:'10px'}}>
+                        <FormLabel id="gender" 
+                        >Gender</FormLabel>
+                        <RadioGroup
+                            row
+                            aria-labelledby="gender"
+                            name="gender"
+                            value={userTobeUpdate?.Gender}  
+                            onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Gender: e.target.value})}
+                        >
+                            <FormControlLabel value="female" control={<Radio />} label="Female" />
+                            <FormControlLabel value="male" control={<Radio />} label="Male" />
+                            <FormControlLabel value="other" control={<Radio />} label="Other" />
+                            {/* palatandaan kung pano mag disable ng radiobutton */}
+                            {/* <FormControlLabel
+                            value="disabled"
+                            disabled
+                            control={<Radio />}
+                            label="other"
+                            /> */}
+                        </RadioGroup>
+                    </FormControl>
+                    <TextField 
+                        variant="outlined" 
+                        label='Address' 
+                        id="address"
+                        multiline rows={3} 
+                        sx={{width: '100%', marginBottom:'10px'}}
+                        value={userTobeUpdate?.Address}  
+                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Address: e.target.value})}
+                    />
+                    <TextField 
+                        type='password'
+                        variant="outlined"  
+                        id="currentPassword" 
+                        sx={{width: '48%', marginBottom:'10px', display:'flex'}}  
+                        value={userTobeUpdate?.Password} 
+                    />
+                    <TextField 
+                        type='password'
+                        variant="outlined" 
+                        label='New Password' 
+                        id="newPassword" 
+                        sx={{width: '48%', marginBottom:'10px', display:'flex'}} 
+                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Password: e.target.value})}     
+                    />
+                    <TextField 
+                        type='password'
+                        variant="outlined" 
+                        label='Confirm New Password' 
+                        id="confirmPassword" 
+                        sx={{width: '48%', marginBottom:'10px', display:'flex'}} 
+                        onChange={(e) => setUserTobeUpdate({...userTobeUpdate, Password: e.target.value})}   
+                    />
+                    <Button 
+                        variant="contained"
+                        className='save-btn'
+                        sx={{marginBottom: 2}}
+                        onClick={() => {updateUserInfoService(userTobeUpdate.id, userTobeUpdate)}}
+                    >
+                        Save Changes
+                    </Button> 
+                </Box>
+            </Modal>
         </div>
     </div>
   )
