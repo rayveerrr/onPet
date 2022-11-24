@@ -9,7 +9,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase-config";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
 
 import Navbar from "../../components/Navbar";
@@ -110,26 +110,31 @@ const Supplies = () => {
   // Add new product
   const addProduct = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
+      const imageURL = await uploadImage();
+      alert(imageURL);
       await addDoc(productCollectionRef, {
         Category: category,
         Description: description,
         Price: price,
         ProdName: prodName,
         Quantity: quantity,
+        ImageURL: imageURL,
       });
       handleClose();
     } catch (e) {
       console.log(e);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   // Read all the product
   useEffect(() => {
     const getProduct = async () => {
       const data = await getDocs(productCollectionRef);
-      setProduct(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      const products = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      console.log(products);
+      setProduct(products);
     };
     getProduct();
   }, []);
@@ -141,16 +146,22 @@ const Supplies = () => {
   };
 
   // not working pero walang error. pag upload naman ng image to
-
   const [imgUpload, setImgUpload] = useState(null);
 
   const uploadImage = () => {
-    if(imgUpload == null) return;
+    if (imgUpload == null) return;
     const imgRef = ref(storage, `suppliesImages/${imgUpload.name + v4()}`);
-    uploadBytes(imgRef, imgUpload).then(() => {
-      alert('Image Uploaded')
-    })
-  }
+    return uploadBytes(imgRef, imgUpload).then(
+      async (res) => await retrieveImg(res.metadata.fullPath)
+    );
+  };
+
+  const retrieveImg = async (fullPath) => {
+    return getDownloadURL(ref(storage, fullPath)).then((url) => {
+      alert(url);
+      return url;
+    });
+  };
 
   const emptyRows =
     page > 0
@@ -357,10 +368,15 @@ const Supplies = () => {
                     <MenuItem value="treats">Pet Treats</MenuItem>
                   </Select>
                 </FormControl>
-                <input type="file" onChange={(e) => {setImgUpload(e.target.files[0])}} />
-                <Button variant="contained" onClick={uploadImage}>
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    setImgUpload(e.target.files[0]);
+                  }}
+                />
+                {/* <Button variant="contained" onClick={uploadImage}>
                   Upload Image
-                </Button>
+                </Button> */}
                 <div>
                   <Button
                     variant="contained"

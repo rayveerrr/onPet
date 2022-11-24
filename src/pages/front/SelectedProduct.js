@@ -86,14 +86,20 @@ const SelectedProduct = () => {
 
     const data = await getDocs(cartCollectionRef);
     const cartItems = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    if (cartItems.find((cartItems) => cartItems.ProdID === params.id && cartItems.Email === sessionStorage.getItem("email"))) {
+    if (
+      cartItems.find(
+        (cartItems) =>
+          cartItems.ProdID === params.id &&
+          cartItems.Email === sessionStorage.getItem("email")
+      )
+    ) {
       return alert("Item already existing in cart.");
     }
     try {
       await addDoc(cartCollectionRef, {
         ProdID: params.id,
         Email: sessionStorage.getItem("email"),
-        Image: product.Image || "",
+        ImageURL: product.ImageURL,
         Price: product.Price,
         ProdName: product.ProdName,
         Quantity: quantityCount,
@@ -111,7 +117,7 @@ const SelectedProduct = () => {
         <div className="product-container">
           <div className="product-image">
             <div className="product-image-container">
-              <img src={beefpro} alt="product" />
+              <img src={product.ImageURL} alt="product" />
             </div>
             <div className="product-description">
               <Accordion
@@ -142,7 +148,9 @@ const SelectedProduct = () => {
               {Number(product.Price).toLocaleString()}
             </p>
             <p>
-              <Typography variant='caption' sx={{color: 'gray'}}>Maximum quantity is 10* </Typography>
+              <Typography variant="caption" sx={{ color: "gray" }}>
+                Maximum quantity is 10*{" "}
+              </Typography>
               <Stack direction="row" alignItems="center">
                 {" "}
                 Quantity:
@@ -158,7 +166,11 @@ const SelectedProduct = () => {
                   placeholder="0"
                   value={quantityCount}
                 ></Input>
-                <IconButton aria-label="add" onClick={increment} disabled={quantityCount == 10}>
+                <IconButton
+                  aria-label="add"
+                  onClick={increment}
+                  disabled={quantityCount == 10}
+                >
                   <AddIcon fontSize="small" sx={hoverStyle} />
                 </IconButton>
                 <IconButton variant="contained" endIcon={<AddIcon />} />
