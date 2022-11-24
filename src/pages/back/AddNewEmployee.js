@@ -38,28 +38,86 @@ function AddNewEmployee() {
   const [address, setAddress] = useState("");
   const [phoneNum, setPhoneNum] = useState(0);
   const [cpass, setCPass] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Error
+  const [nameErr, setNameErr] = useState(false);
+  const [emailErr, setEmailErr] = useState(false);
+  const [phoneNumErr, setPhoneNumErr] = useState(false);
+  const [addressErr, setAddressErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+  const [cpassErr, setCPassErr] = useState(false);
+  const [genderErr, setGenderErr] = useState(false);
 
   const userCollectionRef = collection(db, "users");
 
-  const addNewEmployee = async () => {
-    try {
-      const user = await createUserWithEmailAndPassword(
-        auth,
-        registerEmail,
-        registerPassword
-      );
+  const addNewEmployee = async (e) => {
+    e.preventDefault();
+    setName(false);
+    setPhoneNum(false);
+    setCPass(false);
+    setAddress(false);
 
-      await addDoc(userCollectionRef, {
-        Name: name,
-        Email: registerEmail,
-        Gender: gender,
-        PhoneNum: phoneNum,
-        Password: registerPassword,
-        Address: address,
-        UserType: "Admin",
-      });
-    } catch (e) {
-      console.log(e.message);
+    if (name == "") {
+      return setNameErr(true);
+    }
+    if (registerEmail == "") {
+      return setEmailErr(true);
+    }
+    if (address == "") {
+      return setAddressErr(true);
+    }
+    if (gender == "") {
+      return setGenderErr(true);
+    }
+    var pattern = new RegExp(/^(09|\+639)\d{9}$/);
+    if (phoneNum == "") {
+
+      return setPhoneNumErr(true);
+
+    }else if(!pattern.test(phoneNum) || phoneNum.length != 11){
+    
+      alert("Please enter valid phone number.");
+      return setPhoneNumErr(true);
+  
+    }
+    if (registerPassword == "") {
+      return setPasswordErr(true);
+    }
+    if (cpass == "" || cpass != registerPassword) {
+      alert('Password do not much')
+      return setCPassErr(true);
+    }
+    if (
+      name &&
+      registerEmail &&
+      gender &&
+      phoneNum &&
+      registerPassword &&
+      cpass
+    ){
+      try {
+        setLoading(true)
+        const user = await createUserWithEmailAndPassword(
+          auth,
+          registerEmail,
+          registerPassword
+        );
+
+        await addDoc(userCollectionRef, {
+          Name: name,
+          Email: registerEmail,
+          Gender: gender,
+          PhoneNum: phoneNum,
+          Password: registerPassword,
+          Address: address,
+          UserType: "Admin",
+        });
+        window.location.href = '/addnewemployee'
+      } catch (e) {
+        console.log(e.message);
+      }
+      setLoading(false);
     }
   };
 
@@ -88,6 +146,7 @@ function AddNewEmployee() {
               onChange={(e) => {
                 setName(e.target.value);
               }}
+              error={nameErr}
               sx={{ width: "48%", marginBottom: "10px", marginRight: "4%" }}
               required
             />
@@ -99,6 +158,7 @@ function AddNewEmployee() {
               onChange={(e) => {
                 setPhoneNum(e.target.value);
               }}
+              error={phoneNumErr}
               sx={{ width: "48%", marginBottom: "10px" }}
               required
             />
@@ -109,6 +169,7 @@ function AddNewEmployee() {
               onChange={(e) => {
                 setRegisterEmail(e.target.value);
               }}
+              error={emailErr}
               sx={{ width: "100%", marginBottom: "10px" }}
               required
             />
@@ -123,6 +184,7 @@ function AddNewEmployee() {
                 onChange={(e) => {
                   setGender(e.target.value);
                 }}
+                error={genderErr}
                 required
               >
                 <FormControlLabel
@@ -157,6 +219,7 @@ function AddNewEmployee() {
               onChange={(e) => {
                 setAddress(e.target.value);
               }}
+              error={addressErr}
               multiline
               rows={3}
               sx={{ width: "100%", marginBottom: "10px" }}
@@ -171,6 +234,7 @@ function AddNewEmployee() {
               onChange={(e) => {
                 setRegisterPassword(e.target.value);
               }}
+              error={passwordErr}
               sx={{ width: "48%", marginBottom: "10px", marginRight: "4%" }}
               required
             />
@@ -182,6 +246,7 @@ function AddNewEmployee() {
               onChange={(e) => {
                 setCPass(e.target.value);
               }}
+              error={cpassErr}
               sx={{ width: "48%", marginBottom: "10px" }}
               required
             />
@@ -189,6 +254,7 @@ function AddNewEmployee() {
               variant="contained"
               className="save-btn"
               onClick={addNewEmployee}
+              disabled={loading}
             >
               Add new employee
             </Button>

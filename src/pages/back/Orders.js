@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Paper, Typography } from "@mui/material";
 
 import { collection, addDoc, getDocs, doc } from "firebase/firestore";
@@ -56,58 +56,6 @@ const deleteStyle = {
   },
 };
 
-const data = [
-  {
-    id: 1,
-    orderNumber: "1234",
-    Username: "Leenard Taboy",
-    Status: "Completed",
-    TotalAmount: "10000",
-  },
-  {
-    id: 2,
-    orderNumber: "1235",
-    Username: "Ric Angelo Aristosa",
-    Status: "Completed",
-    TotalAmount: "3000",
-  },
-  {
-    id: 3,
-    orderNumber: "2314",
-    Username: "Gio Matthew Bayna",
-    Status: "Completed",
-    TotalAmount: "10000",
-  },
-  {
-    id: 4,
-    orderNumber: "5323",
-    Username: "Jarl Renzo Naguit",
-    Status: "Rejected",
-    TotalAmount: "2315",
-  },
-  {
-    id: 5,
-    orderNumber: "1263",
-    Username: "Reyver Bautista",
-    Status: "Completed",
-    TotalAmount: "7531",
-  },
-  {
-    id: 6,
-    orderNumber: "3013",
-    Username: "Pedro Penduko",
-    Status: "Rejected",
-    TotalAmount: "300",
-  },
-  {
-    id: 7,
-    orderNumber: "4312",
-    Username: "Coco Martin",
-    Status: "Completed",
-    TotalAmount: "100",
-  },
-];
-
 const Orders = () => {
   useAuthentication("Admin");
 
@@ -123,7 +71,7 @@ const Orders = () => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - orders.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -133,6 +81,27 @@ const Orders = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+
+  const [finalLists, setFinalLists] = useState([]);
+  const [orders, setOrders] = useState([]);
+
+  const ordersCollectionRef = collection(db, "Orders");
+
+  useEffect(() => {
+    const getOrders = async () => {
+    const data = await getDocs(ordersCollectionRef);
+    // get the order number so it will filter and create a table for the products that has the same ordernumber. will try fix this again tomorrow morning.
+    const orderList = data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(order => order.Status === 'Completed' || order.Status === 'Rejected');
+    let uniqueOrderId = [...new Set(orderList.map((order) => order.OrderNumber))]
+    let uniqueOrderStatus = [...new Set(orderList.map((order) => order.Status))]
+    const finalList = uniqueOrderId.map((orderNumber) => ({orderNumber, orders: orderList.filter(order => order.OrderNumber == orderNumber)}))
+    const finalStat = uniqueOrderStatus.map((finalstatus) => ({finalstatus, finalStats: orderList.filter(order => order.Status == finalstatus)}))
+    setOrders(orderList)
+    setFinalLists(finalList)
+    }
+    getOrders();
+  }, []);
 
   return (
     <div>
@@ -150,49 +119,54 @@ const Orders = () => {
               sx={{ minWidth: 700, width: "100%" }}
               aria-label="customized table"
             >
+              
+                  
+                  
               <TableHead sx={{ bgcolor: "black" }}>
                 <TableRow>
                   <TableCell sx={{ color: "white" }}>
-                    Purchased History ID
+                  Order Number
                   </TableCell>
                   <TableCell align="left" sx={{ color: "white" }}>
-                    Order Number
-                  </TableCell>
-                  <TableCell align="left" sx={{ color: "white" }}>
-                    Username
-                  </TableCell>
-                  <TableCell align="left" sx={{ color: "white" }}>
-                    Status
+                    Email
                   </TableCell>
                   <TableCell align="left" sx={{ color: "white" }}>
                     Total Amount
                   </TableCell>
+                  <TableCell align="left" sx={{ color: "white" }}>
+                    Status
+                  </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? data.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : data
-                ).map((row) => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row">
-                      {row.id}
-                    </TableCell>
-                    <TableCell align="left">{row.orderNumber}</TableCell>
-                    <TableCell align="left">{row.Username}</TableCell>
-                    <TableCell align="left">{row.Status}</TableCell>
-                    <TableCell align="left">{row.TotalAmount}</TableCell>
-                  </TableRow>
-                ))}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
+              {finalLists.map((order) => {
+                return (
+                  <>
+                    <TableBody>
+                      {(rowsPerPage > 0
+                        ? order.orders.slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                        : order.orders
+                      ).map((actualOrder) => (
+                        <TableRow key={actualOrder.id}>
+                          <TableCell component="th" scope="row">
+                            {actualOrder.OrderNumber}
+                          </TableCell>
+                          <TableCell align="left">{actualOrder.Email}</TableCell>
+                          <TableCell align="left">{actualOrder.totalAmount}</TableCell>
+                          <TableCell align="left">{actualOrder.Status}</TableCell>
+                        </TableRow>
+                      ))}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </>
+                )
+              })}
               <TableFooter>
                 <TableRow>
                   <TablePagination
@@ -203,7 +177,7 @@ const Orders = () => {
                       { label: "All", value: -1 },
                     ]}
                     colSpan={7}
-                    count={data.length}
+                    count={orders.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{
@@ -217,6 +191,7 @@ const Orders = () => {
                   />
                 </TableRow>
               </TableFooter>
+              
             </Table>
           </TableContainer>
         </Paper>

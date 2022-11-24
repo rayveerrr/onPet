@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Paper, Typography } from "@mui/material";
+import React, { useState, useEffect, useMemo } from "react";
+import { Container, Divider, Paper, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { collection, addDoc, getDocs, doc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
@@ -21,6 +21,7 @@ import Modal from "@mui/material/Modal";
 import CheckIcon from "@mui/icons-material/Check";
 import useAuthentication from "../../hooks/auth/authenticate-user";
 import {
+  getAllOrdersService,
   getMyOrdersService,
   orderStatusAcceptedService,
   orderStatusCompletedService,
@@ -33,7 +34,6 @@ const editStyle = {
   color: "white",
   fontSize: 16,
   borderRadius: 8,
-  marginRight: 1,
   "&:hover": {
     bgcolor: "white",
     color: "green",
@@ -135,43 +135,19 @@ const phModal = {
   pb: 3,
 };
 
-const PetHistory = () => {
+const Transaction = () => {
   useAuthentication("Admin");
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const [address, setAddress] = useState("");
-  const [orderID, setOrderID] = useState("");
-  const [transactionID, setTransactionID] = useState("");
-  const [status, setStatus] = useState("");
-  const [totalAmount, setTotalAmount] = useState("");
-  const [userID, setUserID] = useState("");
-  const [usersName, setUsersName] = useState("");
-  const [date, setDate] = useState("");
-
-  const [ageErr, setAgeErr] = useState("");
-  const [breedErr, setBreedErr] = useState("");
-  const [dateErr, setDateErr] = useState("");
-  const [genderErr, setGenderErr] = useState("");
-  const [ownerNameErr, setOwnerNameErr] = useState("");
-  const [petNameErr, setPetNameErr] = useState("");
-  const [remarksErr, setRemarksErr] = useState("");
-  const [speciesErr, setSpeciesErr] = useState("");
-  const [healthHistoryErr, setHealthHistoryErr] = useState("");
-
   const [orders, setOrders] = useState([]);
+  const [finalLists, setFinalLists] = useState([]);
+  const [finalStatus, setFinalStatus] = useState([]);
+  const [Payment, setPayment] = useState([]);
 
   const ordersCollectionRef = collection(db, "Orders");
 
   useEffect(() => {
     const getOrders = async () => {
-      const orders = await getMyOrdersService();
+      const orders = await getAllOrdersService();
       setOrders(orders);
     };
     getOrders();
@@ -200,119 +176,75 @@ const PetHistory = () => {
     setPage(0);
   };
 
-  const submitUpdateStatusOrder = async (id, Status) => {
+  useEffect(() => {
+    const getOrders = async () => {
+    const data = await getDocs(ordersCollectionRef);
+    // get the order number so it will filter and create a table for the products that has the same ordernumber. will try fix this again tomorrow morning.
+    const orderList = data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(order => order.Status === 'On Process' || order.Status === 'On Request');
+    let uniqueOrderId = [...new Set(orderList.map((order) => order.OrderNumber))]
+    let uniqueOrderStatus = [...new Set(orderList.map((order) => order.Status))]
+    const finalList = uniqueOrderId.map((orderNumber) => ({orderNumber, orders: orderList.filter(order => order.OrderNumber == orderNumber)}))
+    const finalStat = uniqueOrderStatus.map((finalstatus) => ({finalstatus, finalStats: orderList.filter(order => order.Status == finalstatus)}))
+    setOrders(orderList)
+    setFinalLists(finalList)
+    }
+    getOrders();
+  }, []);
+
+
+  // tingin ko need ko mag loop hanggang sa macomplete lahat ng status ng isang order number pag sa pag pindot ng button.
+  const submitUpdateOrderStatus = async (id, Status) => {
     await orderUpdateStatusService(id, Status);
     const myOrders = await getMyOrdersService();
     setOrders(myOrders);
     alert("Status updated.");
   };
 
+  const sumOfPrice = useMemo(() => {
+    let totalAmount = 0;
+    // fix mo to ver. kukunin mo yung order number lahat ng magkakaparehas na order number pag aaddin mo yung mga price tas ilagay sa total amount.
+        finalLists.forEach(orderItem => totalAmount += orderItem.totalAmount)
+        return totalAmount;
+}, [finalLists])
+
   return (
     <div>
       <Navbar visible={navVisible} show={showNavbar} />
       <div className={!navVisible ? "page" : "page page-with-navbar"}>
-        <Paper elevation={3} sx={{ width: "90%", margin: "5% auto" }}>
+        <Paper sx={{ width: "90%", margin: "5% auto"}}>
           <Typography variant="h4" sx={{ marginLeft: "1%" }}>
             List of Order request
           </Typography>
 
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="parent-modal-title"
-            aria-describedby="parent-modal-description"
-          >
-            <Box sx={{ ...phModal, width: "80%" }}>
-              <Paper sx={{ marginTop: 3, width: "100%", padding: 4 }}></Paper>
-            </Box>
-          </Modal>
-          <TableContainer sx={{ display: "flex", justifyContent: "center" }}>
-            <Table
-              sx={{ minWidth: 700, width: "100%" }}
-              aria-label="customized table"
-            >
-              <TableHead sx={{ bgcolor: "black" }}>
-                <TableRow>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Order ID
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    User ID
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Order Number
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Product ID
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Quantity
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Total Amount
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Payment Method
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Status
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "white", fontSize: "17px" }}
-                  >
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? orders.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : orders
-                ).map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell align="left">{order.id}</TableCell>
-                    <TableCell align="left">{order.Email}</TableCell>
-                    <TableCell align="left">{order.OrderNumber}</TableCell>
-                    <TableCell align="left">{order.ProdID}</TableCell>
-                    <TableCell align="left">{order.Quantity}</TableCell>
-                    <TableCell align="left">{order.totalAmount}</TableCell>
-                    <TableCell align="left">{order.Payment}</TableCell>
-                    <TableCell align="right">{order.Status}</TableCell>
-                    <TableCell align="left">
-                      {/* Aayusin ko pa kapag same order number dapat iisang table lang, bali ang gagawin ko isang table per same order number tapos dapat hindi kasama sa loop yung mga button. Tapos kapag pinindot si button dapat mag uupdate na lahat ng status ng may same order number according sa pipinduting button
-                              ang gagwin kong design ay parang receipt para maangas chariz hahahaha*/}
-                      <IconButton
+          {finalLists.map((order) => {
+            return (
+            <>
+            <Paper sx={{width: '50%', marginBottom: '10px'}}>
+              <Container sx={{display: 'flex', justifyContent: 'space-between'}}>
+              <Typography variant="title">Order number: {order.orders[0].OrderNumber}</Typography>
+              <Typography variant="title">Status: {order.orders[0].Status}</Typography>
+              </Container>
+              <Container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}} >
+              <Typography variant="title">Email: {order.orders[0].Email}</Typography>
+              <Typography variant="title">Payment Method: {order.orders[0].Payment}</Typography>
+              </Container>
+              {order.orders.map((actualOrder) => {
+                return ( 
+                  <>
+                    <Container sx={{display: 'flex', flexDirection: 'column', width: '100%', marginTop: '15px'}}>
+                      <Typography variant="title">Product Name: {actualOrder.ProdName}</Typography>
+                      <Typography variant="title">Quantity: {actualOrder.Quantity}</Typography>
+                      <Typography variant="title">Total Amount: {actualOrder.totalAmount}</Typography>
+                      <Divider/>
+                    </Container>
+                  </>
+                )
+              })}
+              <Typography variant="title">Total Payment: {sumOfPrice}</Typography>
+              <IconButton
                         sx={acceptStyle}
                         onClick={() =>
-                          submitUpdateStatusOrder(order.id, "On Process")
+                          submitUpdateOrderStatus(order.orders[0].id, "On Process")
                         }
                       >
                         Accept
@@ -321,7 +253,7 @@ const PetHistory = () => {
                       <IconButton
                         sx={deleteStyle}
                         onClick={() =>
-                          submitUpdateStatusOrder(order.id, "Rejected")
+                          submitUpdateOrderStatus(order.orders[0].id, "Rejected")
                         }
                       >
                         Reject
@@ -330,47 +262,18 @@ const PetHistory = () => {
                       <IconButton
                         sx={editStyle}
                         onClick={() =>
-                          submitUpdateStatusOrder(order.id, "Completed")
+                          submitUpdateOrderStatus(order.orders[0].id, "Completed")
                         }
                       >
                         Complete
                         <DeleteIcon fontSize="small" />
                       </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      25,
-                      { label: "All", value: -1 },
-                    ]}
-                    colSpan={10}
-                    count={orders.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    SelectProps={{
-                      inputProps: {
-                        "aria-label": "rows per page",
-                      },
-                      native: true,
-                    }}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
+            </Paper>
+            </>)
+          })}
+              
+
+          
           {/* <div style={{ height: '40%', width: '80%'}}>
                       <DataGrid
                         rows={petRows}
@@ -385,4 +288,4 @@ const PetHistory = () => {
   );
 };
 
-export default PetHistory;
+export default Transaction;

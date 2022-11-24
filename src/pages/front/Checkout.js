@@ -25,6 +25,7 @@ function Checkout() {
     const [ payment, setPayment] = useState('');
     const [ cart, setCart] = useState([]);
     const [ user, setUser ] = useState(null);
+    const [ loading, setLoading] = useState(false);
 
     const cartCollectionRef = collection(db, "MyCart")
     const orderCollectionRef = collection(db, "Orders")
@@ -66,9 +67,11 @@ function Checkout() {
         }))
 
         for(const order of items) {
+            setLoading(true)
             await addDoc(orderCollectionRef, order)
         }
         alert('Your order has been on process. Check on your Orderlist')
+        setLoading(false)
         window.location.href = '/mypurchase'
     }
 
@@ -131,7 +134,7 @@ function Checkout() {
                             </FormControl>
                             <Typography variant='caption' sx={{color: 'gray'}}> Shipping fee is not included to total amount. </Typography>
                             <Typography variant='h5' sx={{marginRight: 2}}> Total Amount: ₱ {sumOfPrice.toLocaleString()} </Typography>
-                            <Button variant='contained' sx={{marginRight: 2, fontSize: 20, width: '20%'}} onClick={placeOrder}>
+                            <Button variant='contained' sx={{marginRight: 2, fontSize: 20, width: '20%'}} onClick={placeOrder} disabled={loading}>
                                 Place Order
                             </Button>
                         </Paper>

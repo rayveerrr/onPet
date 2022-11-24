@@ -31,18 +31,22 @@ function MyPurchase() {
     useAuthentication('User')
 
     const [orders, setOrders] = useState([]);
+    const [finalLists, setFinalLists] = useState([]);
+    const [finalStatus, setFinalStatus] = useState([]);
 
     const ordersCollectionRef = collection(db, "Orders")
 
     useEffect(() => {
         const getOrders = async () => {
         const data = await getDocs(ordersCollectionRef);
-        const orderNumber = data.OrderNumber;
-        console.log(data.orderNumber)
         // get the order number so it will filter and create a table for the products that has the same ordernumber. will try fix this again tomorrow morning.
-        console.log(data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(cartItem => (cartItem.Email === sessionStorage.getItem("email")) && (cartItem.OrderNumber === orderNumber )))
-        setOrders(data.docs.map((doc) => ({...doc.data(),id: doc.id }))
-        .filter(cartEmail => (cartEmail.Email === sessionStorage.getItem("email"))))
+        const orderList = data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(cartEmail => (cartEmail.Email === sessionStorage.getItem("email")));
+        let uniqueOrderId = [...new Set(orderList.map((order) => order.OrderNumber))]
+        let uniqueOrderStatus = [...new Set(orderList.map((order) => order.Status))]
+        const finalList = uniqueOrderId.map((orderNumber) => ({orderNumber, orders: orderList.filter(order => order.OrderNumber == orderNumber)}))
+        const finalStat = uniqueOrderStatus.map((finalstatus) => ({finalstatus, finalStats: orderList.filter(order => order.Status == finalstatus)}))
+        setOrders(orderList)
+        setFinalLists(finalList)
         }
         getOrders();
     }, []);
@@ -54,11 +58,18 @@ function MyPurchase() {
             return totalAmount;
     }, [orders])
 
+    const sumOfOrderNumber = useMemo(() => {
+        let totalAmount = 0;
+        // fix mo to ver. kukunin mo yung order number lahat ng magkakaparehas na order number pag aaddin mo yung mga price tas ilagay sa total amount.
+        finalLists.forEach(orderItem => totalAmount += orderItem.totalAmount)
+        return totalAmount;
+    }, [finalLists])
+
     const orderStatus = useMemo(() => {
         let Status = '';
-        orders.forEach(ordersStatus => Status = ordersStatus.Status)
+        finalLists.forEach(ordersStatus => Status = ordersStatus.Status)
         return Status;
-    }, [orders])
+    }, [finalLists])
   
 
     return (
@@ -70,44 +81,54 @@ function MyPurchase() {
                 <Paper className="content-header" elevation={1}>
                         <Link to="#">All</Link>
                         <Link to="#">Order</Link>
-                        <Link to="#">Completed</Link>
+                        <Link to="#">My Purchased History</Link>
                 </Paper>
-                        {orders.map((order) => {
-                            return ( 
-                            <>
-                <div className="purchase-container">
-                    <div className="purchase-border">
-                        <div className="purchase-header" style={{diplay: 'flex', justifyContent: 'space-between'}}>
-                            <h3> Order number: {order.OrderNumber}</h3>
-                            <h4>Status: {orderStatus} </h4>
-                        </div>
-                                
-                                <hr />
-                                <div className="purchase">
-                                    
-                                    <div className="img-container">
-                                        <img src={beefpro} alt="Product-image" />
+                        {finalLists.map((order) => {
+                            return (
+                                <>
+                                    <div className='purchase-container' style={{border: '2px solid #0D0D0D', borderRadius: 10, padding: '1em', marginBottom: '10px', backgroundColor: 'white'}}>
+                                        <div className='purchase-border'>
+                                            <div className="purchase-header" style={{diplay: 'flex', justifyContent: 'space-between'}}>
+                                                <h3> Order number: {order.orders[0].OrderNumber}</h3>
+                                                <h4>Status: {order.orders[0].Status} </h4>
+                                            </div>
+                                        </div>
+                                        {
+                                            order.orders.map((actualOrder) => {
+                                                return ( 
+                                                    <>
+                                                        <div className="purchase-container">
+                                                            <Paper elevation={3} className="purchase-border">
+                                                                <div className="purchase">
+                                                                    <div className="img-container">
+                                                                        <img src={beefpro} alt="Product-image" />
+                                                                    </div>
+                                                                    {/* ilalagay ko yung price ng product */}
+                                                                    <div className="product-details">
+                                                                        <h3>{actualOrder.ProdName}</h3>
+                                                                        <h4>Quantity: {actualOrder.Quantity} </h4>
+                                                                    </div>
+                                                                    <div className="price">
+                                                                        <p>₱ {actualOrder.totalAmount.toLocaleString()}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </Paper>
+                                                        </div>
+                                                    </>
+                                                );
+                                            })
+                                        }
+                                        <div className="total">
+                                            <p>Order Total: <span> ₱ {sumOfPrice.toLocaleString()}</span></p>
+                                        </div> 
                                     </div>
-                                    {/* ilalagay ko yung price ng product */}
-                                    <div className="product-details">
-                                        <h3>{order.ProdName}</h3>
-                                        <h4>Quantity: {order.Quantity} </h4>
-                                    </div>
-                                    <hr />
-                                    <div className="price">
-                                        <p>₱ {order.totalAmount.toLocaleString()}</p>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="total">
-                                    <p>Order Total: <span> ₱ {sumOfPrice.toLocaleString()}</span></p>
-                                </div>
-                        </div>
-                    </div>
-                            </>
-                            );
+                                </>
+                            )
+                            
                         })} 
-                                
+                            <div className="total">
+                                <p>Order Total: <span> ₱ {sumOfPrice.toLocaleString()}</span></p>
+                            </div>      
                 </div>
             </div>
         <Footer />

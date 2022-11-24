@@ -12,17 +12,20 @@ function Feedback() {
 
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const feedbackCollectionRef = collection(db, "Feedback");
 
     const feedback = async () => {
         try {
+            setLoading(true);
             await addDoc(feedbackCollectionRef, {Name: name, Date: Date().toLocaleString(), Comment: comment })
             alert('Feedback posted')
             window.location = '/'
         } catch (e) {
             console.log(e.message);
         }
+        setLoading(false);
     }
 
   return (
@@ -48,7 +51,7 @@ function Feedback() {
                 multiline rows={5}
                 required
                 sx={{marginBottom: 2}}  />
-              <Button onClick={feedback} variant='contained'>Post Feedback</Button>
+              <Button onClick={feedback} variant='contained' disabled={loading}>Post Feedback</Button>
             </Paper>
         <Footer/>
     </div>

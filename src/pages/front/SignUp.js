@@ -36,64 +36,56 @@ function SignUp() {
   const [address, setAddress] = useState("");
   const [phoneNum, setPhoneNum] = useState(0);
   const [cpass, setCPass] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Error
+  const [nameErr, setNameErr] = useState(false);
+  const [emailErr, setEmailErr] = useState(false);
+  const [phoneNumErr, setPhoneNumErr] = useState(false);
+  const [addressErr, setAddressErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+  const [cpassErr, setCPassErr] = useState(false);
+  const [genderErr, setGenderErr] = useState(false);
 
   const userCollectionRef = collection(db, "users");
 
-  const register = async () => {
-    try {
-      const user = await createUserWithEmailAndPassword(
-        auth,
-        registerEmail,
-        registerPassword
-      );
-      await addDoc(userCollectionRef, {
-        Name: name,
-        Email: registerEmail,
-        Gender: gender,
-        PhoneNum: phoneNum,
-        Password: registerPassword,
-        Address: address,
-        UserType: "User",
-      });
-      window.location = "/login";
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-
-  // Error
-  const [nameError, setNameError] = useState();
-  const [emailError, setEmailError] = useState();
-  const [phoneNumError, setPhoneNumError] = useState();
-  const [passwordError, setPasswordError] = useState();
-  const [cpassError, setCPassError] = useState();
-
-  async function handleSubmit(e) {
+  const register = async (e) => {
+    e.preventDefault();
     setName(false);
-    registerEmail(false);
     setPhoneNum(false);
-    registerPassword(false);
     setCPass(false);
+    setAddress(false);
 
     if (name == "") {
-      setNameError(true);
+      return setNameErr(true);
     }
     if (registerEmail == "") {
-      setEmailError(true);
+      return setEmailErr(true);
+    }
+    if (address == "") {
+      return setAddressErr(true);
     }
     if (gender == "") {
-      setEmailError(true);
+      return setGenderErr(true);
     }
+    var pattern = new RegExp(/^(09|\+639)\d{9}$/);
     if (phoneNum == "") {
-      setPhoneNumError(true);
+
+      return setPhoneNumErr(true);
+
+    }else if(!pattern.test(phoneNum) || phoneNum.length != 11){
+    
+      alert("Please enter valid phone number.");
+      return setPhoneNumErr(true);
+  
     }
     if (registerPassword == "") {
-      setPasswordError(true);
+      return setPasswordErr(true);
     }
-    if (cpass == "") {
-      setCPassError(true);
+    if (cpass == "" || cpass != registerPassword) {
+      alert('Password do not much')
+      return setCPassErr(true);
     }
-
     if (
       name &&
       registerEmail &&
@@ -101,17 +93,77 @@ function SignUp() {
       phoneNum &&
       registerPassword &&
       cpass
-    ) {
-      console.log(
-        name,
-        registerEmail,
-        gender,
-        phoneNum,
-        registerPassword,
-        cpass
-      );
+    ){
+      try {
+        setLoading(true);
+        const user = await createUserWithEmailAndPassword(
+          auth,
+          registerEmail,
+          registerPassword
+        );
+        await addDoc(userCollectionRef, {
+          Name: name,
+          Email: registerEmail,
+          Gender: gender,
+          PhoneNum: phoneNum,
+          Password: registerPassword,
+          Address: address,
+          UserType: "User",
+        });
+        window.location = "/login";
+      } catch (e) {
+        console.log(e.message);
+      }
+      setLoading(false)
     }
-  }
+  };
+
+  
+
+  // async function handleSubmit(e) {
+  //   setName(false);
+  //   registerEmail(false);
+  //   setPhoneNum(false);
+  //   registerPassword(false);
+  //   setCPass(false);
+
+  //   if (name == "") {
+  //     setNameError(true);
+  //   }
+  //   if (registerEmail == "") {
+  //     setEmailError(true);
+  //   }
+  //   if (gender == "") {
+  //     setGenderError(true);
+  //   }
+  //   if (phoneNum == "") {
+  //     setPhoneNumError(true);
+  //   }
+  //   if (registerPassword == "") {
+  //     setPasswordError(true);
+  //   }
+  //   if (cpass == "") {
+  //     setCPassError(true);
+  //   }
+
+  //   if (
+  //     name &&
+  //     registerEmail &&
+  //     gender &&
+  //     phoneNum &&
+  //     registerPassword &&
+  //     cpass
+  //   ) {
+  //     console.log(
+  //       name,
+  //       registerEmail,
+  //       gender,
+  //       phoneNum,
+  //       registerPassword,
+  //       cpass
+  //     );
+  //   }
+  // }
 
   const paperStyled = {
     padding: 20,
@@ -152,7 +204,7 @@ function SignUp() {
                 id="name"
                 fullWidth
                 onChange={(e) => setName(e.target.value)}
-                error={nameError}
+                error={nameErr}
                 required
                 style={txtFieldStyle}
               />
@@ -163,7 +215,7 @@ function SignUp() {
                 id="email"
                 fullWidth
                 onChange={(e) => setRegisterEmail(e.target.value)}
-                error={emailError}
+                error={emailErr}
                 required
                 style={txtFieldStyle}
               />
@@ -173,6 +225,7 @@ function SignUp() {
                   row
                   aria-labelledby="gender"
                   name="gender"
+                  error={genderErr}
                   value={gender}
                   onChange={(e) => {
                     setGender(e.target.value);
@@ -206,10 +259,11 @@ function SignUp() {
                 type="number"
                 variant="outlined"
                 label="Phone number"
+                placeholder='09123456789'
                 id="phoneNum"
                 fullWidth
                 onChange={(e) => setPhoneNum(e.target.value)}
-                error={phoneNumError}
+                error={phoneNumErr}
                 required
                 style={txtFieldStyle}
               />
@@ -219,6 +273,7 @@ function SignUp() {
                 id="address"
                 fullWidth
                 onChange={(e) => setAddress(e.target.value)}
+                error={addressErr}
                 required
                 style={txtFieldStyle}
               />
@@ -229,7 +284,7 @@ function SignUp() {
                 id="password"
                 fullWidth
                 onChange={(e) => setRegisterPassword(e.target.value)}
-                error={passwordError}
+                error={passwordErr}
                 required
                 style={txtFieldStyle}
               />
@@ -240,7 +295,7 @@ function SignUp() {
                 id="confirmPassword"
                 fullWidth
                 onChange={(e) => setCPass(e.target.value)}
-                error={cpassError}
+                error={cpassErr}
                 required
                 style={txtFieldStyle}
               />
@@ -253,6 +308,7 @@ function SignUp() {
                 fullWidth
                 style={btnStyle}
                 onClick={register}
+                disabled={loading}
               >
                 Sign Up
               </Button>

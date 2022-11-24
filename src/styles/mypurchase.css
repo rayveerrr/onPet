@@ -33,9 +33,6 @@
     margin-top: 5px;
 }
 
-.content-container .purchase-container .purchase-border{
-    border: 1px var(--kulayblack) solid;
-}
 
 .content-container .purchase-container .purchase-border .purchase-header{
     width: 95%;

@@ -43,7 +43,7 @@ function Navbar({visible, show}) {
 				<div>
 					<NavLink
 						className="logo"
-						to="/admin"
+						to="/editAdmin"
 					>
 							<img
 								src={pac}

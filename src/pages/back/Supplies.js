@@ -9,7 +9,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase-config";
-import { ref } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
 
 import Navbar from "../../components/Navbar";
 import {
@@ -74,65 +75,6 @@ const suppliesModal = {
   pb: 3,
 };
 
-const data = [
-  {
-    id: 1,
-    itemName: "name",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "image",
-  },
-  {
-    id: 2,
-    itemName: "Ongoing",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "image",
-  },
-  {
-    id: 3,
-    itemName: "Ongoing",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "Ongoing",
-  },
-  {
-    id: 4,
-    itemName: "Ongoing",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "Ongoing",
-  },
-  {
-    id: 5,
-    itemName: "Ongoing",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "Ongoing",
-  },
-  {
-    id: 6,
-    itemName: "Ongoing",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "Ongoing",
-  },
-  {
-    id: 7,
-    itemName: "Ongoing",
-    description: "Ongoing",
-    price: "Ongoing",
-    quantity: "Ongoing",
-    image: "Ongoing",
-  },
-];
-
 const Supplies = () => {
   useAuthentication("Admin");
 
@@ -159,6 +101,7 @@ const Supplies = () => {
   const [price, setPrice] = useState(0);
   const [prodName, setProdName] = useState("");
   const [quantity, setQuantity] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [product, setProduct] = useState([]);
 
@@ -167,6 +110,7 @@ const Supplies = () => {
   // Add new product
   const addProduct = async () => {
     try {
+      setLoading(true)
       await addDoc(productCollectionRef, {
         Category: category,
         Description: description,
@@ -178,6 +122,7 @@ const Supplies = () => {
     } catch (e) {
       console.log(e);
     }
+    setLoading(false)
   };
 
   // Read all the product
@@ -197,42 +142,15 @@ const Supplies = () => {
 
   // not working pero walang error. pag upload naman ng image to
 
-  const [img, setImg] = useState("");
+  const [imgUpload, setImgUpload] = useState(null);
 
-  const handleImage = (e) => {
-    e.preventDefault();
-    let pickedFile;
-    if (e.target.files && e.target.files.length > 0) {
-      pickedFile = e.target.file[0];
-      setImg(pickedFile);
-    }
-  };
-
-  const singleUpload = (e) => {
-    e.preventDefault();
-    const uploadTask = storage.ref("Images").child("image1").put(img);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(progress);
-      },
-      (err) => {
-        console.log(err);
-      },
-      () => {
-        storage
-          .ref("Images")
-          .child("image1")
-          .getDownloadURL()
-          .then((imageUrL) => {
-            db.collection("Images").add({
-              imgUrl: imageUrL,
-            });
-          });
-      }
-    );
-  };
+  const uploadImage = () => {
+    if(imgUpload == null) return;
+    const imgRef = ref(storage, `suppliesImages/${imgUpload.name + v4()}`);
+    uploadBytes(imgRef, imgUpload).then(() => {
+      alert('Image Uploaded')
+    })
+  }
 
   const emptyRows =
     page > 0
@@ -439,8 +357,8 @@ const Supplies = () => {
                     <MenuItem value="treats">Pet Treats</MenuItem>
                   </Select>
                 </FormControl>
-                <input type="file" onChange={handleImage} />
-                <Button variant="contained" onClick={singleUpload}>
+                <input type="file" onChange={(e) => {setImgUpload(e.target.files[0])}} />
+                <Button variant="contained" onClick={uploadImage}>
                   Upload Image
                 </Button>
                 <div>
@@ -450,6 +368,7 @@ const Supplies = () => {
                     fullWidth
                     sx={{ marginTop: 2 }}
                     onClick={addProduct}
+                    disabled={loading}
                   >
                     ADD NEW ITEM
                   </Button>

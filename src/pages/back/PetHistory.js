@@ -97,16 +97,17 @@ const PetHistory = () => {
     const [remarks, setRemarks] = useState('');
     const [species, setSpecies] = useState('');
     const [healthHistory, setHealthHistory] = useState('');
+    const [loading, setLoading] = useState(false);
   
-    const [ageErr, setAgeErr] = useState('');
-    const [breedErr, setBreedErr] = useState('');
-    const [dateErr, setDateErr] = useState('');
-    const [genderErr, setGenderErr] = useState('');
-    const [ownerNameErr, setOwnerNameErr] = useState('');
-    const [petNameErr, setPetNameErr] = useState('');
-    const [remarksErr, setRemarksErr] = useState('');
-    const [speciesErr, setSpeciesErr] = useState('');
-    const [healthHistoryErr, setHealthHistoryErr] = useState('');
+    const [ageErr, setAgeErr] = useState(false);
+    const [breedErr, setBreedErr] = useState(false);
+    const [dateErr, setDateErr] = useState(false);
+    const [genderErr, setGenderErr] = useState(false);
+    const [ownerNameErr, setOwnerNameErr] = useState(false);
+    const [petNameErr, setPetNameErr] = useState(false);
+    const [remarksErr, setRemarksErr] = useState(false);
+    const [speciesErr, setSpeciesErr] = useState(false);
+    const [healthHistoryErr, setHealthHistoryErr] = useState(false);
     
     const [petToBeUpdate, setPetToBeUpdate] = useState(null);
   
@@ -198,38 +199,42 @@ const PetHistory = () => {
       setSpeciesErr("false")
       setHealthHistoryErr("false")
       if( age == ''){
-        setAgeErr(true)
+        return setAgeErr(true)
       }
       if( breed == ''){
-          setBreedErr(true)
+        return setBreedErr(true)
       }
       if( gender == ''){
-          setGenderErr(true)
+        return setGenderErr(true)
       }
       if( date == ''){
-          setDateErr(true)
+        return setDateErr(true)
       }
       if( ownerName == ''){
-          setOwnerNameErr(true)
+        return setOwnerNameErr(true)
       }
       if( petName == ''){
-          setPetNameErr(true)
+        return setPetNameErr(true)
       }
       if( remarks == ''){
-        setRemarksErr(true)
+        return setRemarksErr(true)
       }
       if( species == ''){
-        setSpeciesErr(true)
+        return setSpeciesErr(true)
       }
       if( healthHistory == ''){
-        setHealthHistoryErr(true)
+        return setHealthHistoryErr(true)
       }
+      if(age && breed && date && gender && ownerName && petName && remarks && species && healthHistory){
         try {
+            setLoading(true)
             const petHistory = await addDoc(petHistoryCollectionRef, {age: age, breed: breed, date: date, gender: gender, ownerName: ownerName, petName: petName, remarks: remarks, species: species, healthHistory: healthHistory});
             handleClose();
         } catch (e) {
             console.log(e.message);
         }
+        setLoading(false)
+      }
     }
 
   return (
@@ -330,7 +335,7 @@ const PetHistory = () => {
                                         required 
                                       />
 
-                              <Button variant='contained' color='success' onClick={addPetHistory} startIcon={<AddBoxIcon />} >Add pet history</Button>
+                              <Button variant='contained' color='success' onClick={addPetHistory} disabled={loading} startIcon={<AddBoxIcon />} >Add pet history</Button>
                               <Button variant='contained' type='reset' sx={{margin: '0 5px'}} >Clear</Button>
                               <Button variant='contained' color='error' onClick={handleClose}>Cancel</Button>
                             </form>

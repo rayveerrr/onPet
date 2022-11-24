@@ -1,5 +1,5 @@
 import { idID } from "@mui/material/locale";
-import { getOrderByID, getOrdersByEmail, updateStatusByID } from "../repositories/orders.repository";
+import { getAllOrders, getOrderByID, getOrdersByEmail, updateStatusByID } from "../repositories/orders.repository";
 
 export const placeOrder = () => {};
 
@@ -18,4 +18,9 @@ export const orderUpdateStatusService = async (id, newStatus) => {
 export const getMyOrdersService = async () => {
     const getEmail = sessionStorage.getItem('email')
     return getOrdersByEmail(getEmail)
+}
+
+
+export const getAllOrdersService = async () => {
+    return getAllOrders()
 }
