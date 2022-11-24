@@ -82,7 +82,6 @@ const Orders = () => {
     setPage(0);
   };
 
-
   const [finalLists, setFinalLists] = useState([]);
   const [orders, setOrders] = useState([]);
 
@@ -90,16 +89,30 @@ const Orders = () => {
 
   useEffect(() => {
     const getOrders = async () => {
-    const data = await getDocs(ordersCollectionRef);
-    // get the order number so it will filter and create a table for the products that has the same ordernumber. will try fix this again tomorrow morning.
-    const orderList = data.docs.map((doc) => ({...doc.data(),id: doc.id })).filter(order => order.Status === 'Completed' || order.Status === 'Rejected');
-    let uniqueOrderId = [...new Set(orderList.map((order) => order.OrderNumber))]
-    let uniqueOrderStatus = [...new Set(orderList.map((order) => order.Status))]
-    const finalList = uniqueOrderId.map((orderNumber) => ({orderNumber, orders: orderList.filter(order => order.OrderNumber == orderNumber)}))
-    const finalStat = uniqueOrderStatus.map((finalstatus) => ({finalstatus, finalStats: orderList.filter(order => order.Status == finalstatus)}))
-    setOrders(orderList)
-    setFinalLists(finalList)
-    }
+      const data = await getDocs(ordersCollectionRef);
+      // get the order number so it will filter and create a table for the products that has the same ordernumber. will try fix this again tomorrow morning.
+      const orderList = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .filter(
+          (order) => order.Status === "Completed" || order.Status === "Rejected"
+        );
+      let uniqueOrderId = [
+        ...new Set(orderList.map((order) => order.OrderNumber)),
+      ];
+      let uniqueOrderStatus = [
+        ...new Set(orderList.map((order) => order.Status)),
+      ];
+      const finalList = uniqueOrderId.map((orderNumber) => ({
+        orderNumber,
+        orders: orderList.filter((order) => order.OrderNumber == orderNumber),
+      }));
+      const finalStat = uniqueOrderStatus.map((finalstatus) => ({
+        finalstatus,
+        finalStats: orderList.filter((order) => order.Status == finalstatus),
+      }));
+      setOrders(orderList);
+      setFinalLists(finalList);
+    };
     getOrders();
   }, []);
 
@@ -119,14 +132,9 @@ const Orders = () => {
               sx={{ minWidth: 700, width: "100%" }}
               aria-label="customized table"
             >
-              
-                  
-                  
               <TableHead sx={{ bgcolor: "black" }}>
                 <TableRow>
-                  <TableCell sx={{ color: "white" }}>
-                  Order Number
-                  </TableCell>
+                  <TableCell sx={{ color: "white" }}>Order Number</TableCell>
                   <TableCell align="left" sx={{ color: "white" }}>
                     Email
                   </TableCell>
@@ -153,9 +161,15 @@ const Orders = () => {
                           <TableCell component="th" scope="row">
                             {actualOrder.OrderNumber}
                           </TableCell>
-                          <TableCell align="left">{actualOrder.Email}</TableCell>
-                          <TableCell align="left">{actualOrder.totalAmount}</TableCell>
-                          <TableCell align="left">{actualOrder.Status}</TableCell>
+                          <TableCell align="left">
+                            {actualOrder.Email}
+                          </TableCell>
+                          <TableCell align="left">
+                            {actualOrder.totalAmount}
+                          </TableCell>
+                          <TableCell align="left">
+                            {actualOrder.Status}
+                          </TableCell>
                         </TableRow>
                       ))}
                       {emptyRows > 0 && (
@@ -165,7 +179,7 @@ const Orders = () => {
                       )}
                     </TableBody>
                   </>
-                )
+                );
               })}
               <TableFooter>
                 <TableRow>
@@ -191,7 +205,6 @@ const Orders = () => {
                   />
                 </TableRow>
               </TableFooter>
-              
             </Table>
           </TableContainer>
         </Paper>
