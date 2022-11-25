@@ -9,7 +9,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase-config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 import Navbar from "../../components/Navbar";
@@ -110,31 +110,26 @@ const Supplies = () => {
   // Add new product
   const addProduct = async () => {
     try {
-      setLoading(true);
-      const imageURL = await uploadImage();
-      alert(imageURL);
+      setLoading(true)
       await addDoc(productCollectionRef, {
         Category: category,
         Description: description,
         Price: price,
         ProdName: prodName,
         Quantity: quantity,
-        ImageURL: imageURL,
       });
       handleClose();
     } catch (e) {
       console.log(e);
     }
-    setLoading(false);
+    setLoading(false)
   };
 
   // Read all the product
   useEffect(() => {
     const getProduct = async () => {
       const data = await getDocs(productCollectionRef);
-      const products = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      console.log(products);
-      setProduct(products);
+      setProduct(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
     getProduct();
   }, []);
@@ -146,22 +141,16 @@ const Supplies = () => {
   };
 
   // not working pero walang error. pag upload naman ng image to
+
   const [imgUpload, setImgUpload] = useState(null);
 
   const uploadImage = () => {
-    if (imgUpload == null) return;
+    if(imgUpload == null) return;
     const imgRef = ref(storage, `suppliesImages/${imgUpload.name + v4()}`);
-    return uploadBytes(imgRef, imgUpload).then(
-      async (res) => await retrieveImg(res.metadata.fullPath)
-    );
-  };
-
-  const retrieveImg = async (fullPath) => {
-    return getDownloadURL(ref(storage, fullPath)).then((url) => {
-      alert(url);
-      return url;
-    });
-  };
+    uploadBytes(imgRef, imgUpload).then(() => {
+      alert('Image Uploaded')
+    })
+  }
 
   const emptyRows =
     page > 0
@@ -227,10 +216,10 @@ const Supplies = () => {
                     <TableCell align="right">{prod.Quantity}</TableCell>
                     <TableCell align="right">{prod.Category}</TableCell>
                     <TableCell align="right">
-                      <IconButton sx={editStyle}>
+                      {/* <IconButton sx={editStyle}>
                         Edit
                         <EditIcon fontSize="small" />
-                      </IconButton>
+                      </IconButton> */}
                       <IconButton
                         sx={deleteStyle}
                         onClick={() => {
@@ -368,15 +357,10 @@ const Supplies = () => {
                     <MenuItem value="treats">Pet Treats</MenuItem>
                   </Select>
                 </FormControl>
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    setImgUpload(e.target.files[0]);
-                  }}
-                />
-                {/* <Button variant="contained" onClick={uploadImage}>
+                <input type="file" onChange={(e) => {setImgUpload(e.target.files[0])}} />
+                <Button variant="contained" onClick={uploadImage}>
                   Upload Image
-                </Button> */}
+                </Button>
                 <div>
                   <Button
                     variant="contained"

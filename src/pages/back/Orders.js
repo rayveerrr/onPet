@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Paper, Typography } from "@mui/material";
 
 import { collection, addDoc, getDocs, doc } from "firebase/firestore";
@@ -66,21 +66,7 @@ const Orders = () => {
     flexDirection: "column",
     alignItems: "center",
   };
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - orders.length) : 0;
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+ 
 
   const [finalLists, setFinalLists] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -116,6 +102,28 @@ const Orders = () => {
     getOrders();
   }, []);
 
+  const transactionSumOfPrice = useCallback((orderList: any[]) => {
+    let totalAmount = 0;
+    orderList.forEach((orderItem) => (totalAmount += orderItem.totalAmount));
+    return totalAmount;
+  }, []);
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - finalLists.length) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <div>
       <Navbar visible={navVisible} show={showNavbar} />
@@ -123,7 +131,7 @@ const Orders = () => {
         className={!navVisible ? "page" : "page page-with-navbar"}
         style={orderStyle}
       >
-        <Paper sx={{ textAlign: "center", margin: "5% auto" }}>
+        <Paper sx={{ textAlign: "center", margin: "5% auto"}}>
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             Purchased History
           </Typography>
@@ -146,29 +154,26 @@ const Orders = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              {finalLists.map((order) => {
-                return (
-                  <>
                     <TableBody>
                       {(rowsPerPage > 0
-                        ? order.orders.slice(
+                        ? finalLists.slice(
                             page * rowsPerPage,
                             page * rowsPerPage + rowsPerPage
                           )
-                        : order.orders
-                      ).map((actualOrder) => (
-                        <TableRow key={actualOrder.id}>
+                        : finalLists
+                      ).map((order) => (
+                        <TableRow key={order.orders.id}>
                           <TableCell component="th" scope="row">
-                            {actualOrder.OrderNumber}
+                            {order.orders[0].OrderNumber}
                           </TableCell>
                           <TableCell align="left">
-                            {actualOrder.Email}
+                            {order.orders[0].Email}
                           </TableCell>
                           <TableCell align="left">
-                            {actualOrder.totalAmount}
+                            ₱ {transactionSumOfPrice(order.orders).toLocaleString()}
                           </TableCell>
                           <TableCell align="left">
-                            {actualOrder.Status}
+                            {order.orders[0].Status}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -178,9 +183,6 @@ const Orders = () => {
                         </TableRow>
                       )}
                     </TableBody>
-                  </>
-                );
-              })}
               <TableFooter>
                 <TableRow>
                   <TablePagination
@@ -191,7 +193,7 @@ const Orders = () => {
                       { label: "All", value: -1 },
                     ]}
                     colSpan={7}
-                    count={orders.length}
+                    count={finalLists.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{

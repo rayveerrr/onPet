@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Container, Divider, Paper, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { collection, addDoc, getDocs, doc } from "firebase/firestore";
@@ -18,7 +18,8 @@ import TablePagination from "@mui/material/TablePagination";
 import Box from "@mui/material/Box";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import Modal from "@mui/material/Modal";
-import CheckIcon from "@mui/icons-material/Check";
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import BeenhereIcon from '@mui/icons-material/Beenhere';
 import useAuthentication from "../../hooks/auth/authenticate-user";
 import {
   getAllOrdersService,
@@ -140,8 +141,7 @@ const Transaction = () => {
 
   const [orders, setOrders] = useState([]);
   const [finalLists, setFinalLists] = useState([]);
-  const [finalStatus, setFinalStatus] = useState([]);
-  const [Payment, setPayment] = useState([]);
+  const [onProcessLists, setOnProcessLists] = useState([]);
 
   const ordersCollectionRef = collection(db, "Orders");
 
@@ -184,7 +184,7 @@ const Transaction = () => {
         .map((doc) => ({ ...doc.data(), id: doc.id }))
         .filter(
           (order) =>
-            order.Status === "On Process" || order.Status === "On Request"
+            order.Status === "On Request"
         );
       let uniqueOrderId = [
         ...new Set(orderList.map((order) => order.OrderNumber)),
@@ -206,6 +206,36 @@ const Transaction = () => {
     getOrders();
   }, []);
 
+  useEffect(() => {
+    const getOrders = async () => {
+      const data = await getDocs(ordersCollectionRef);
+      // get the order number so it will filter and create a table for the products that has the same ordernumber. will try fix this again tomorrow morning.
+      const orderList = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .filter(
+          (order) =>
+            order.Status === "On Process" 
+        );
+      let uniqueOrderId = [
+        ...new Set(orderList.map((order) => order.OrderNumber)),
+      ];
+      let uniqueOrderStatus = [
+        ...new Set(orderList.map((order) => order.Status)),
+      ];
+      const finalList = uniqueOrderId.map((orderNumber) => ({
+        orderNumber,
+        orders: orderList.filter((order) => order.OrderNumber == orderNumber),
+      }));
+      const finalStat = uniqueOrderStatus.map((finalstatus) => ({
+        finalstatus,
+        finalStats: orderList.filter((order) => order.Status == finalstatus),
+      }));
+      setOrders(orderList);
+      setOnProcessLists(finalList);
+    };
+    getOrders();
+  }, []);
+
   // tingin ko need ko mag loop hanggang sa macomplete lahat ng status ng isang order number pag sa pag pindot ng button.
   const submitUpdateOrderStatus = async (OrderNumber, Status) => {
     await orderUpdateStatusService(OrderNumber, Status);
@@ -215,34 +245,40 @@ const Transaction = () => {
     alert("Status updated.");
   };
 
-  const sumOfPrice = useMemo(() => {
+  const transactionSumOfPrice = useCallback((orderList: any[]) => {
     let totalAmount = 0;
-    // fix mo to ver. kukunin mo yung order number lahat ng magkakaparehas na order number pag aaddin mo yung mga price tas ilagay sa total amount.
-    finalLists.forEach((orderItem) => (totalAmount += orderItem.totalAmount));
+    orderList.forEach((orderItem) => (totalAmount += orderItem.totalAmount));
     return totalAmount;
-  }, [finalLists]);
+  }, []);
 
   return (
     <div>
+      <Typography variant="h3" sx={{textAlign: 'center', }}>
+        Transaction
+      </Typography>
       <Navbar visible={navVisible} show={showNavbar} />
       <div className={!navVisible ? "page" : "page page-with-navbar"}>
-        <Paper sx={{ width: "90%", margin: "5% auto" }}>
-          <Typography variant="h4" sx={{ marginLeft: "1%" }}>
-            List of Order request
+      {/* On Request */}{/* On Request */}
+      {/* On Request */}{/* On Request */}
+        
+        <Paper sx={{ width: "100%", margin: "0 auto", display: 'flex', justifyContent: 'space-evenly'}}>
+        
+          <div>
+          <Typography variant="h4" textAlign={'center'}>
+            On Request
           </Typography>
-
           {finalLists.map((order) => {
             return (
               <>
-                <Paper sx={{ width: "50%", marginBottom: "10px" }}>
+                <Paper sx={{ width: "100%", marginBottom: "10px", padding: '1em' }}>
                   <Container
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+                    sx={{ display: "flex", justifyContent: "space-between", margin: 0}}
                   >
-                    <Typography variant="title">
-                      Order number: {order.orders[0].OrderNumber}
+                    <Typography variant="subtitle2">
+                      <b>Order number: #{order.orders[0].OrderNumber}</b>
                     </Typography>
-                    <Typography variant="title">
-                      Status: {order.orders[0].Status}
+                    <Typography variant="subtitle2">
+                      <b>Status: {order.orders[0].Status}</b>
                     </Typography>
                   </Container>
                   <Container
@@ -252,17 +288,14 @@ const Transaction = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="title">
-                      Email: {order.orders[0].Email}
+                    <Typography variant="subtitle2">
+                      <b>Email: {order.orders[0].Email}</b>
                     </Typography>
-                    <Typography variant="title">
-                      Payment Method: {order.orders[0].Payment}
+                    <Typography variant="subtitle2">
+                      <b>Payment Method: {order.orders[0].Payment}</b>
                     </Typography>
                   </Container>
-                  {order.orders.map((actualOrder) => {
-                    return (
-                      <>
-                        <Container
+                  <Container
                           sx={{
                             display: "flex",
                             flexDirection: "column",
@@ -270,24 +303,33 @@ const Transaction = () => {
                             marginTop: "15px",
                           }}
                         >
-                          <Typography variant="title">
+                  {order.orders.map((actualOrder) => {
+                    return (
+                      <>
+                        
+                          <Typography variant="caption">
                             Product Name: {actualOrder.ProdName}
                           </Typography>
-                          <Typography variant="title">
+                          <Typography variant="caption">
                             Quantity: {actualOrder.Quantity}
                           </Typography>
-                          <Typography variant="title">
+                          <Typography variant="caption">
                             Total Amount: {actualOrder.totalAmount}
                           </Typography>
                           <Divider />
-                        </Container>
+                          
+                        
                       </>
                     );
                   })}
-                  <Typography variant="title">
-                    Total Payment: {sumOfPrice}
+                  
+                  <Typography variant="subtitle2">
+                    <b>Total Payment: ₱ {transactionSumOfPrice(order.orders).toLocaleString()}</b>
                   </Typography>
-                  <IconButton
+                  </Container>
+                  
+                  <Container sx={{textAlign: 'center', display: 'flex', justifyContent: 'space-around', marginTop: '0.5em'}}>
+                    <IconButton
                     sx={acceptStyle}
                     onClick={() =>
                       submitUpdateOrderStatus(
@@ -295,47 +337,115 @@ const Transaction = () => {
                         "On Process"
                       )
                     }
-                  >
-                    Accept
-                    <CheckIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    sx={deleteStyle}
-                    onClick={() =>
-                      submitUpdateOrderStatus(
-                        order.orders[0].OrderNumber,
-                        "Rejected"
-                      )
-                    }
-                  >
-                    Reject
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    sx={editStyle}
-                    onClick={() =>
-                      submitUpdateOrderStatus(
-                        order.orders[0].OrderNumber,
-                        "Completed"
-                      )
-                    }
-                  >
-                    Complete
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
+                    >
+                      Accept 
+                      <PlaylistAddCheckIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      sx={deleteStyle}
+                      onClick={() =>
+                        submitUpdateOrderStatus(
+                          order.orders[0].OrderNumber,
+                          "Rejected"
+                        )
+                      }
+                    >
+                      Reject 
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                    </Container>
                 </Paper>
               </>
             );
           })}
+          </div>
 
-          {/* <div style={{ height: '40%', width: '80%'}}>
-                      <DataGrid
-                        rows={petRows}
-                        columns={petColumns}
-                        pageSize={5}
-                        rowsPerPageOptions={[2]}
-                    />
-                    </div> */}
+          <div>
+        {/* On Process */}{/* On Process */}
+        {/* On Process */}{/* On Process */}
+        <Typography variant="h4" textAlign={'center'}>
+            On Process
+          </Typography>
+        {onProcessLists.map((order) => {
+            return (
+              <>
+                <Paper sx={{ width: "100%", marginBottom: "10px", padding: '1em' }}>
+                  <Container
+                    sx={{ display: "flex", justifyContent: "space-between", margin: 0}}
+                  >
+                    <Typography variant="subtitle2">
+                      <b>Order number: #{order.orders[0].OrderNumber}</b>
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      <b>Status: {order.orders[0].Status}</b>
+                    </Typography>
+                  </Container>
+                  <Container
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography variant="subtitle2">
+                      <b>Email: {order.orders[0].Email}</b>
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      <b>Payment Method: {order.orders[0].Payment}</b>
+                    </Typography>
+                  </Container>
+                  <Container
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "100%",
+                            marginTop: "15px",
+                          }}
+                        >
+                  {order.orders.map((actualOrder) => {
+                    return (
+                      <>
+                        
+                          <Typography variant="caption">
+                            Product Name: {actualOrder.ProdName}
+                          </Typography>
+                          <Typography variant="caption">
+                            Quantity: {actualOrder.Quantity}
+                          </Typography>
+                          <Typography variant="caption">
+                            Total Amount: {actualOrder.totalAmount}
+                          </Typography>
+                          <Divider />
+                          
+                        
+                      </>
+                    );
+                  })}
+                  
+                  <Typography variant="subtitle2">
+                    <b>Total Payment: ₱ {transactionSumOfPrice(order.orders).toLocaleString()}</b>
+                  </Typography>
+                  </Container>
+                  
+                  <Container sx={{textAlign: 'center'}}>
+                    <IconButton
+                      sx={editStyle}
+                      onClick={() =>
+                        submitUpdateOrderStatus(
+                          order.orders[0].OrderNumber,
+                          "Completed"
+                        )
+                      }
+                    >
+                      Complete 
+                      <BeenhereIcon fontSize="small" />
+                    </IconButton>
+                    </Container>
+                </Paper>
+              </>
+            );
+          })}
+          </div>
         </Paper>
       </div>
     </div>

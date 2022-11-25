@@ -6,9 +6,6 @@ import { db } from "../../firebase-config";
 //components
 import Header from "../../components/frontend/Header";
 
-//img
-import beefpro from "../../image/beefpro.jpg";
-
 // styles
 import "../../styles/productlist.css";
 
@@ -37,6 +34,7 @@ import Footer from "../../components/frontend/Footer";
 const ProductList = () => {
   const hoverProduct = {
     margin: "5px",
+    padding: '1em',
     "&:hover": {
       boxShadow: 8,
     },
@@ -54,6 +52,11 @@ const ProductList = () => {
     };
     getProduct();
   }, []);
+
+  const [page, setPage] = useState(1);
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
 
   return (
     <>
@@ -108,7 +111,8 @@ const ProductList = () => {
         </Paper>
         <Paper className="allproduct">
           <Paper className="productheader" elevation={2}>
-            <h4>Sort by: </h4>
+            <Typography variant='h3'><b>Product List</b></Typography>
+            {/* <h4>Sort by: </h4>
             <div className="dropdown">
               <Link href="/myaccount">
                 A-Z
@@ -128,7 +132,7 @@ const ProductList = () => {
             <p>1</p>
             <IconButton sx={{ padding: "0" }}>
               <ArrowRightIcon />
-            </IconButton>
+            </IconButton> */}
           </Paper>
           <div className="product-list">
             {product.map((product) => {
@@ -138,25 +142,15 @@ const ProductList = () => {
                     <div className="img-container">
                       <img src={product.ImageURL} alt="Product-image" />
                     </div>
-                    <Typography variant="h6" sx={{ marginLeft: "15px" }}>
-                      {product.ProdName}
+                    <Typography variant="title">
+                      <b>{product.ProdName}</b>
                     </Typography>
-                    <Typography variant="subtitle1" sx={{ marginLeft: "15px" }}>
-                      {" "}
+                    <Typography variant="subtitle1">
                       ₱ {product.Price.toLocaleString()}
                     </Typography>
-                    <Typography variant="body" sx={{ marginLeft: "15px" }}>
+                    <Typography variant="subtitle2">
                       In Stock, {product.Quantity} Unit
                     </Typography>
-
-                    <CardActions disableSpacing>
-                      <IconButton aria-label="add to cart">
-                        <AddShoppingCartIcon />
-                      </IconButton>
-                      <IconButton aria-label="buy now">
-                        <ShoppingBagIcon />
-                      </IconButton>
-                    </CardActions>
                   </Link>
                 </Card>
               );
