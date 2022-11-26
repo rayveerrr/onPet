@@ -158,7 +158,6 @@ const Supplies = () => {
 
   const retrieveImg = async (fullPath) => {
     return getDownloadURL(ref(storage, fullPath)).then((url) => {
-      alert(url);
       return url;
     });
   };
