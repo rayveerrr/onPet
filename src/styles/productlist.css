@@ -2,7 +2,6 @@
 
 .product-container{
     width: 70%;
-    height: 170vh;
     margin: 120px auto 20px auto;
     display: flex;
     justify-content: space-between;
@@ -41,7 +40,7 @@
     height: 5%;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     color: var(--white);
     background-color: var(--kulayblack);
 }

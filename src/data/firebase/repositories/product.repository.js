@@ -1,4 +1,4 @@
-import { collection, deleteDoc, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../../firebase-config";
 
 const docCollection = collection(db, "Product");
@@ -26,3 +26,8 @@ export const getProducts = async () => {
 // export const updateProductById = (id: , recentProductData) => {
 //   return setDoc(doc(db, "Product", cartItem.id), { ...recentProductData });
 // };
+
+export const updateProductByID = (id, data) => {
+  console.log(data)
+  return setDoc(doc(db, "Product", id), data)
+}

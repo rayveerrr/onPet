@@ -9,7 +9,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase-config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 import Navbar from "../../components/Navbar";
@@ -111,15 +111,12 @@ const Supplies = () => {
   const addProduct = async () => {
     try {
       setLoading(true);
-      const imageURL = await uploadImage();
-      alert(imageURL);
       await addDoc(productCollectionRef, {
         Category: category,
         Description: description,
         Price: price,
         ProdName: prodName,
         Quantity: quantity,
-        ImageURL: imageURL,
       });
       handleClose();
     } catch (e) {
@@ -132,9 +129,7 @@ const Supplies = () => {
   useEffect(() => {
     const getProduct = async () => {
       const data = await getDocs(productCollectionRef);
-      const products = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      console.log(products);
-      setProduct(products);
+      setProduct(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
     getProduct();
   }, []);
@@ -146,6 +141,7 @@ const Supplies = () => {
   };
 
   // not working pero walang error. pag upload naman ng image to
+
   const [imgUpload, setImgUpload] = useState(null);
 
   const uploadImage = () => {
@@ -226,10 +222,10 @@ const Supplies = () => {
                     <TableCell align="right">{prod.Quantity}</TableCell>
                     <TableCell align="right">{prod.Category}</TableCell>
                     <TableCell align="right">
-                      <IconButton sx={editStyle}>
+                      {/* <IconButton sx={editStyle}>
                         Edit
                         <EditIcon fontSize="small" />
-                      </IconButton>
+                      </IconButton> */}
                       <IconButton
                         sx={deleteStyle}
                         onClick={() => {
@@ -373,9 +369,9 @@ const Supplies = () => {
                     setImgUpload(e.target.files[0]);
                   }}
                 />
-                {/* <Button variant="contained" onClick={uploadImage}>
+                <Button variant="contained" onClick={uploadImage}>
                   Upload Image
-                </Button> */}
+                </Button>
                 <div>
                   <Button
                     variant="contained"
