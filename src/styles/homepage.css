@@ -92,7 +92,7 @@
 .main .feedback-section{
     background-color: var(--white);
     width: 70%;
-    height: 200px;
+    height: 300px;
     margin: 20px auto;
     border: 1px var(--kulayblack) solid;
     display: grid;
@@ -108,27 +108,10 @@
     padding-left: 10px;
 }
 
-/* Top Sale Section */
-/* Top Sale Section */
-/* Top Sale Section */
-
-.main .topsale-section{
-    background-color: var(--white);
-    width: 70%;
-    height: 200px;
-    margin: 20px auto;
-    border: 1px var(--kulayblack) solid;
+.main .feedback-section .carousel{
+    color: var(--kulayblack);
     display: grid;
-    grid-template-rows: 40px 1fr;
-}
-
-.main .topsale-section h3{
-    background-color: var(--kulayblack);
-    margin: 0;
-    color: var(--white);
-    display: flex;
     align-items: center;
-    padding-left: 10px;
 }
 
 /* About */
@@ -138,11 +121,11 @@
 .main .about-section{
     background-color: var(--white);
     width: 70%;
-    height: 200px;
+    height: 300px;
     margin: 20px auto;
     border: 1px var(--kulayblack) solid;
     display: grid;
-    grid-template-rows: 40px 1fr;
+    grid-template-rows: 40px;
 }
 
 .main .about-section h3{
@@ -153,3 +136,4 @@
     align-items: center;
     padding-left: 10px;
 }
+

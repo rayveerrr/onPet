@@ -9,6 +9,7 @@ import SelectedProduct from "./pages/front/SelectedProduct";
 import Cart from "./pages/front/Cart";
 import MyAccount from "./pages/front/MyAccount";
 import MyPurchase from "./pages/front/MyPurchase";
+import MyPurchaseHistory from "./pages/front/MyPurchaseHistory";
 import Layout from "./components/frontend/Sidebar";
 import EditAdmin from "./pages/back/EditAdmin";
 import Orders from "./pages/back/Orders";
@@ -20,6 +21,7 @@ import Navbar from "./components/Navbar";
 import Feedback from "./pages/front/Feedback";
 import FBComment from "./pages/back/FBComment";
 import Checkout from "./pages/front/Checkout";
+import NotFound from "./pages/front/NotFound";
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/myaccount" element={<MyAccount />} />
         <Route path="/mypurchase" element={<MyPurchase />} />
+        <Route path="/mypurchase/:id" element={<MyPurchaseHistory />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/layout" element={<Layout />} />
@@ -44,6 +47,7 @@ function App() {
         <Route path="/addnewemployee" element={<AddNewEmployee />} />
         <Route path="/transactions" element={<Transaction />} />
         <Route path="/fbcomment" element={<FBComment />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

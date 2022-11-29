@@ -24,6 +24,8 @@ import {
   Divider,
 } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
@@ -41,6 +43,7 @@ const ProductList = () => {
   };
 
   const [product, setProduct] = useState([]);
+  const [search, setSearch] = useState('');
 
   const productCollectionRef = collection(db, "Product");
 
@@ -109,54 +112,53 @@ const ProductList = () => {
             </Link>
           </List>
         </Paper>
-        <Paper className="allproduct">
+        <div className="allproduct">
           <Paper className="productheader" elevation={2}>
             <Typography variant='h3'><b>Product List</b></Typography>
-            {/* <h4>Sort by: </h4>
-            <div className="dropdown">
-              <Link href="/myaccount">
-                A-Z
-                <ArrowDropDownIcon />
-              </Link>
-              <div className="dropdown-content">
-                <Link>A-Z</Link>
-                <Link>Z-A</Link>
-                <Link>Price: Lowest to Highest</Link>
-                <Link>Price: Highest to Lowest</Link>
-              </div>
-            </div>
-
-            <IconButton sx={{ padding: "0" }}>
-              <ArrowLeftIcon />
-            </IconButton>
-            <p>1</p>
-            <IconButton sx={{ padding: "0" }}>
-              <ArrowRightIcon />
-            </IconButton> */}
           </Paper>
+          <div
+            component="form"
+            style={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%', backgroundColor: 'whitesmoke', border: '1px #404040 solid' , borderRadius: '5px', margin: '10px 0' }}
+            >
+            <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Search a product..."
+                inputProps={{ 'aria-label': 'search google maps' }}
+                onChange={(e) => {setSearch(e.target.value)}}
+            />
+            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" >
+                <SearchIcon />
+            </IconButton>
+          </div>
           <div className="product-list">
-            {product.map((product) => {
+            {product.filter((prod) => {
+              if(search == ''){
+                return prod;
+              }else if (prod.ProdName.toLocaleLowerCase().includes(search.toLocaleLowerCase())){
+                return prod;
+              }
+            }).map((prod) => {
               return (
                 <Card className="product" sx={hoverProduct}>
-                  <Link to={"/product/" + product.id}>
+                  <Link to={"/product/" + prod.id}>
                     <div className="img-container">
-                      <img src={product.ImageURL} alt="Product-image" />
+                      <img src={prod.ImageURL} alt="Product-image" />
                     </div>
                     <Typography variant="title">
-                      <b>{product.ProdName}</b>
+                      <b>{prod.ProdName}</b>
                     </Typography>
                     <Typography variant="subtitle1">
-                      ₱ {product.Price.toLocaleString()}
+                      ₱ {prod.Price.toLocaleString()}
                     </Typography>
                     <Typography variant="subtitle2">
-                      In Stock, {product.Quantity} Unit
+                      In Stock, {prod.Quantity} Unit
                     </Typography>
                   </Link>
                 </Card>
               );
             })}
           </div>
-        </Paper>
+        </div>
       </div>
       <Footer />
     </>

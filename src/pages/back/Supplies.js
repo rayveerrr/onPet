@@ -9,7 +9,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase-config";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 import Navbar from "../../components/Navbar";
@@ -38,6 +38,7 @@ import Modal from "@mui/material/Modal";
 
 import "../../index.css";
 import useAuthentication from "../../hooks/auth/authenticate-user";
+import { updateProductService } from "../../data/firebase/services/product.service";
 
 const editStyle = {
   bgcolor: "green",
@@ -104,11 +105,13 @@ const Supplies = () => {
   const [loading, setLoading] = useState(false);
 
   const [product, setProduct] = useState([]);
+  const [productTobeUpdate, setProductTobeUpdate] = useState([]);
 
   const productCollectionRef = collection(db, "Product");
 
   // Add new product
   const addProduct = async () => {
+    const uploadedImage = await uploadImage()
     try {
       setLoading(true)
       await addDoc(productCollectionRef, {
@@ -117,6 +120,7 @@ const Supplies = () => {
         Price: price,
         ProdName: prodName,
         Quantity: quantity,
+        ImageURL: uploadedImage,
       });
       handleClose();
     } catch (e) {
@@ -140,17 +144,22 @@ const Supplies = () => {
     await deleteDoc(productDoc);
   };
 
-  // not working pero walang error. pag upload naman ng image to
 
   const [imgUpload, setImgUpload] = useState(null);
 
   const uploadImage = () => {
-    if(imgUpload == null) return;
+    if (imgUpload == null) return;
     const imgRef = ref(storage, `suppliesImages/${imgUpload.name + v4()}`);
-    uploadBytes(imgRef, imgUpload).then(() => {
-      alert('Image Uploaded')
-    })
-  }
+    return uploadBytes(imgRef, imgUpload).then(
+      async (res) => await retrieveImg(res.metadata.fullPath)
+    );
+  };
+
+  const retrieveImg = async (fullPath) => {
+    return getDownloadURL(ref(storage, fullPath)).then((url) => {
+      return url;
+    });
+  };
 
   const emptyRows =
     page > 0
@@ -166,6 +175,18 @@ const Supplies = () => {
     setPage(0);
   };
 
+  // Modal  for Edit
+  const [edit, setEdit] = useState(false);
+  const handleOpenEdit = (prod) => {
+    console.log(prod)
+    setProductTobeUpdate(prod)
+    setEdit(true);
+  };
+  const handleCloseEdit = () => {
+    setProductTobeUpdate(null)
+    setEdit(false);
+  };
+
   return (
     <div>
       <Navbar visible={navVisible} show={showNavbar} />
@@ -176,7 +197,7 @@ const Supplies = () => {
           </Typography>
           <TableContainer sx={{ display: "flex", justifyContent: "center" }}>
             <Table
-              sx={{ minWidth: 700, width: "100%" }}
+              sx={{ minWidth: 700, width: "90%" }}
               aria-label="customized table"
             >
               <TableHead sx={{ bgcolor: "black" }}>
@@ -216,10 +237,7 @@ const Supplies = () => {
                     <TableCell align="right">{prod.Quantity}</TableCell>
                     <TableCell align="right">{prod.Category}</TableCell>
                     <TableCell align="right">
-                      {/* <IconButton sx={editStyle}>
-                        Edit
-                        <EditIcon fontSize="small" />
-                      </IconButton> */}
+                    <IconButton sx={editStyle} onClick={() => {handleOpenEdit(prod)}}>Edit<EditIcon fontSize='small'/></IconButton> 
                       <IconButton
                         sx={deleteStyle}
                         onClick={() => {
@@ -274,6 +292,8 @@ const Supplies = () => {
           >
             Add new product
           </Button>
+
+          {/* Modal for create */}
           <Modal
             open={open}
             onClose={handleClose}
@@ -357,26 +377,134 @@ const Supplies = () => {
                     <MenuItem value="treats">Pet Treats</MenuItem>
                   </Select>
                 </FormControl>
-                <input type="file" onChange={(e) => {setImgUpload(e.target.files[0])}} />
-                <Button variant="contained" onClick={uploadImage}>
-                  Upload Image
-                </Button>
-                <div>
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    setImgUpload(e.target.files[0]);
+                  }}
+                />
+
+                <div style={{ marginTop: 2 }}>
                   <Button
                     variant="contained"
                     className="save-btn"
-                    fullWidth
-                    sx={{ marginTop: 2 }}
                     onClick={addProduct}
                     disabled={loading}
+                    sx={{ marginRight: 2 }}
                   >
                     ADD NEW ITEM
                   </Button>
+                  <Button variant='contained' color='error' onClick={handleClose}>Cancel</Button>
                 </div>
               </form>
             </Box>
           </Modal>
         </Paper>
+
+        {/* Modal for editing product */}
+        <Modal
+            open={edit}
+            onClose={handleCloseEdit}
+            aria-labelledby="parent-modal-title"
+            aria-describedby="parent-modal-description"
+          >
+            <Box sx={{ ...suppliesModal, width: "60%" }}>
+              <form
+                style={{
+                  width: "100%",
+                  margin: "10px auto",
+                  border: "1px lightgray solid",
+                  padding: 15,
+                  borderRadius: 9,
+                }}
+              >
+                <Typography variant="h4" sx={{ textAlign: "left" }}>
+                  Add new item
+                </Typography>
+                <TextField
+                  m={{ width: "100%" }}
+                  variant="outlined"
+                  label="Item name"
+                  id="itemName"
+                  onChange={(e) => setProductTobeUpdate({...productTobeUpdate, ProdName: e.target.value})}      
+                  value={productTobeUpdate?.ProdName}
+                  sx={{ width: "50%", marginBottom: "10px", marginRight: "2%" }}
+                  required
+                />
+                <TextField
+                  m={{ width: "100%" }}
+                  variant="outlined"
+                  label="Price"
+                  id="price"
+                  onChange={(e) => setProductTobeUpdate({...productTobeUpdate, Price: e.target.value})}      
+                  value={productTobeUpdate?.Price}
+                  sx={{ width: "23%", marginBottom: "10px", marginRight: "2%" }}
+                  required
+                />
+                <TextField
+                  variant="outlined"
+                  label="Quantity"
+                  id="quantity"
+                  onChange={(e) => setProductTobeUpdate({...productTobeUpdate, Quantity: e.target.value})}      
+                  value={productTobeUpdate?.Quantity}
+                  sx={{ width: "23%", marginBottom: "10px" }}
+                  required
+                />
+                <TextField
+                  variant="outlined"
+                  label="Description"
+                  id="description"
+                  onChange={(e) => setProductTobeUpdate({...productTobeUpdate, Description: e.target.value})}      
+                  value={productTobeUpdate?.Description}
+                  sx={{ width: "100%", marginBottom: "10px" }}
+                  multiline
+                  rows={4}
+                  required
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    Category
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="category"
+                    onChange={(e) => setProductTobeUpdate({...productTobeUpdate, Category: e.target.value})}      
+                    value={productTobeUpdate?.Category}
+                    label="Select Category"
+                  >
+                    <MenuItem value="food">Pet Food</MenuItem>
+                    <MenuItem value="supplement">Pet Supplement</MenuItem>
+                    <MenuItem value="cage">Pet Cage</MenuItem>
+                    <MenuItem value="accessories">Pet Accessories</MenuItem>
+                    <MenuItem value="feeders">Pet Feeders/Bowls</MenuItem>
+                    <MenuItem value="treats">Pet Treats</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {/* need to be fix kaya comment in muna */}
+                {/* <input
+                  type="file"
+                  onChange={(e) => {
+                    setImgUpload(e.target.files[0]);
+                  }}
+                /> */}
+
+                <div style={{marginTop: 10}}>
+                  <Button
+                    variant="contained"
+                    className="save-btn"
+                    color='success'
+                    onClick={(e) => {updateProductService(productTobeUpdate.id, productTobeUpdate)}}
+                    disabled={loading}
+                    sx={{marginRight: 2}}
+                  >
+                    Update
+                  </Button>
+                  <Button variant='contained' color='error' onClick={handleCloseEdit}>Cancel</Button>
+                </div>
+              </form>
+            </Box>
+          </Modal>
       </div>
     </div>
   );

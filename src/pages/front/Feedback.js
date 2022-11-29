@@ -19,7 +19,7 @@ function Feedback() {
     const feedback = async () => {
         try {
             setLoading(true);
-            await addDoc(feedbackCollectionRef, {Name: name, Date: Date().toLocaleString(), Comment: comment })
+            await addDoc(feedbackCollectionRef, {Name: name, Date: new Date().toLocaleDateString(), Comment: comment })
             alert('Feedback posted')
             window.location = '/'
         } catch (e) {

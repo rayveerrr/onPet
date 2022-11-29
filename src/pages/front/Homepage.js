@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
+import Carousel from '@itseasy21/react-elastic-carousel';
 
 //components
 import Header from '../../components/frontend/Header'
@@ -17,8 +17,14 @@ import petaccessories from '../../image/pet-accessories-category.png'
 import petcage from '../../image/pet-cage-category.png'
 import petbowl from '../../image/pet-feeder-category.png'
 import pettreats from '../../image/pet-treat-category.png'
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Footer from '../../components/frontend/Footer';
+import { collection, doc, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase-config';
+
+import dog from '../../image/doggo.jpg'
+import cat from '../../image/catto.jpg'
+import rabbit from '../../image/rabbitto.jpeg'
 
 
 const HomePage = () => {
@@ -38,29 +44,22 @@ const HomePage = () => {
     }
 
 
-    const [index, setIndex] = useState(0);
+    const [feedback, setFeedback] = useState([]);
+    const feedbackCollectionRef = collection(db, "Feedback");
 
-    const handleSelect = (selectedIndex, e) => {
-    setIndex(selectedIndex);
-    };
+    useEffect(() => {
+        const getFeedback = async () => {
+            const data = await getDocs(feedbackCollectionRef);
+            setFeedback(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+        }
+        getFeedback(feedback);
+    }, [])
+
+    
     return (
         <div className='main'>
             <Header />
             <div className="promotion-section">
-            {/* <Carousel>
-                <div>
-                    <img src={petfood} />
-                    <p className="legend">Legend 1</p>
-                </div>
-                <div>
-                    <img src={petfood} />
-                    <p className="legend">Legend 2</p>
-                </div>
-                <div>
-                    <img src={petfood} />
-                    <p className="legend">Legend 3</p>
-                </div>
-            </Carousel> */}
             </div>
 
             <div className="category-section">
@@ -119,10 +118,36 @@ const HomePage = () => {
 
             <div className="feedback-section">
                 <h3>Feedback</h3>
+                <div className='carousel'>
+                    {feedback.map((feed) => {
+                        return feedback.length > 0 ?
+                            ( 
+                                <>
+                                    <Carousel>
+                                        <div key={feed.id} style={{width: '100%', height: '200px'}}>
+                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+                                                <Typography variant='h6'><b>Alias: </b><i>{feed.Name}</i></Typography>
+                                                <Typography variant='h6'><b>Date:</b> {feed.Date.toLocaleString()}</Typography>
+                                            </div>
+                                            <Typography variant='title'><b>Feedback/Concern:</b> <em>{feed.Comment}</em></Typography>
+                                        
+                                        </div>
+                                    </Carousel>
+                                </>
+                            ) 
+                            : <div><h3> No feedback </h3></div>
+                        })}
+                </div>
             </div>
 
             <div className="about-section">
                 <h3>About</h3>
+                
+                <div style={{textAlign: 'left', padding: 0, margin: 0}}>
+                <h2 style={{margin: '0.8em', padding: 0}}>Paws and Claws Grooming Services</h2>
+                <Typography variant='title' sx={{margin: '0 1em'}}> The concept started at <em>July 24,2020</em> and established on <em>August 15,2020</em>. </Typography>
+                <Typography variant='subtitle1' sx={{margin: '0 1em'}}> <b>Paws and Claws</b> was established to promote alternative <b>healthy products and promote outmost care for our pets</b> that we all cherished. Many products that are available to market are not enough to provide the nutrition that our pets need and some of it might be harmful. The passion of the owner for animals made the establishment of Paws and Claws possible. </Typography>
+                </div>
             </div>
             <Footer />
         </div>

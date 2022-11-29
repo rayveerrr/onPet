@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import { Link } from 'react-router-dom'
 
 // Styles
@@ -22,6 +22,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { borderRadius } from '@mui/system';
 import { green } from '@mui/material/colors';
 import { AppBar, Box, Container, Divider, Toolbar, Typography } from '@mui/material';
+import { collection } from 'firebase/firestore';
+import { db } from '../../firebase-config';
 
 const Header = () => {
     const iconsStyle ={
@@ -31,6 +33,7 @@ const Header = () => {
         color: 'white',
         marginRight: '20px'
     }
+
   return (
     <>
         {/* Header */}
@@ -59,20 +62,8 @@ const Header = () => {
                 <Link to="/">
                     <img src={pac} className='logo-container' />
                 </Link>
-                <Container sx={{display: 'flex', alignItems: 'center'}}>
-                <Paper
-                    component="form"
-                    sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '80%', backgroundColor: 'white', borderRadius: '25px', margin: '0 20px' }}
-                    >
-                    <InputBase
-                        sx={{ ml: 1, flex: 1 }}
-                        placeholder="Search a product..."
-                        inputProps={{ 'aria-label': 'search google maps' }}
-                    />
-                    <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                        <SearchIcon />
-                    </IconButton>
-                </Paper>
+                <Container sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+                
                 <Link to="/cart">
                     <ShoppingCartIcon fontSize='large' style={cartStyle} />
                 </Link>
@@ -91,6 +82,7 @@ const Header = () => {
                         <Link to="/login">Login</Link>
                         <Link to="/signup">Sign-up</Link>
                         <Link to="/feedback">Feedback</Link>
+                        <Link to="/login">Log-out</Link>
                     </div>
                 </div>
             </div>

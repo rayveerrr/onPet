@@ -15,6 +15,7 @@ import {
   Typography,
   Link,
   Alert,
+  Modal,
 } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -27,6 +28,7 @@ import LoginHeader from "../../components/frontend/LoginHeader";
 //icons
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import Footer from "../../components/frontend/Footer";
+import { Box } from "@mui/system";
 
 function SignUp() {
   const [registerEmail, setRegisterEmail] = useState("");
@@ -118,53 +120,6 @@ function SignUp() {
     }
   };
 
-  
-
-  // async function handleSubmit(e) {
-  //   setName(false);
-  //   registerEmail(false);
-  //   setPhoneNum(false);
-  //   registerPassword(false);
-  //   setCPass(false);
-
-  //   if (name == "") {
-  //     setNameError(true);
-  //   }
-  //   if (registerEmail == "") {
-  //     setEmailError(true);
-  //   }
-  //   if (gender == "") {
-  //     setGenderError(true);
-  //   }
-  //   if (phoneNum == "") {
-  //     setPhoneNumError(true);
-  //   }
-  //   if (registerPassword == "") {
-  //     setPasswordError(true);
-  //   }
-  //   if (cpass == "") {
-  //     setCPassError(true);
-  //   }
-
-  //   if (
-  //     name &&
-  //     registerEmail &&
-  //     gender &&
-  //     phoneNum &&
-  //     registerPassword &&
-  //     cpass
-  //   ) {
-  //     console.log(
-  //       name,
-  //       registerEmail,
-  //       gender,
-  //       phoneNum,
-  //       registerPassword,
-  //       cpass
-  //     );
-  //   }
-  // }
-
   const paperStyled = {
     padding: 20,
     width: "30%",
@@ -182,6 +137,28 @@ function SignUp() {
   const txtFieldStyle = {
     margin: "0 0 10px 0 ",
   };
+
+  const tncModal = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+  };
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <LoginHeader />
@@ -299,10 +276,40 @@ function SignUp() {
                 required
                 style={txtFieldStyle}
               />
+              <Link onClick={handleOpen}>
               <FormControlLabel
                 control={<Checkbox required />}
                 label="I accept the terms and conditions"
               />
+              </Link>
+              
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="parent-modal-title"
+                aria-describedby="parent-modal-description"
+              >
+                <Box sx={{ ...tncModal, width: '80%' }}>
+                  <Paper sx={{marginTop: 3, width: '100%', padding: 4}}>
+                    <Typography variant="h4">
+                    <b>Terms and Conditions:</b>
+                    </Typography>
+
+                      <Typography margin={'5px 20px'}>1.	The logo and brand name are Paws and Claws intellectual property. Using the logo or the name of the brand illegally can face consequences with accordance to RA 8293 (The Intellectual Property Code of the Philippines).</Typography>
+                      <Typography margin={'5px 20px'}>2.	Users should provide the information that is needed for completing the ordering of the products. Using wrong information or other users personal information with no permission, the account that is being question would be put on investigation that can lead to termination of the account.</Typography>
+                      <Typography margin={'5px 20px'}>3.	There are maximum order per item to allow other users to try the products that are available.</Typography>
+                      <Typography margin={'5px 20px'}>4.	If proven that one user has multiple accounts. All the accounts in question would be terminated.</Typography>
+                      <Typography margin={'5px 20px'}>5.	There are no warranty on the item that was sold due to the damage might occur during transit or shipping.</Typography>
+                      <Typography margin={'5px 20px'}>6.	Shipping fee is not included on the total price that is being displayed.</Typography>
+                      <Typography margin={'5px 20px'}>7.	The feedback would be deleted if the content is abusive, offensive, profane or infringes copyright or right of any person.</Typography>
+                      <Typography margin={'5px 20px'}>8.	All products can be viewed but a personal account with complete information is needed to access all the services this website provide.</Typography>
+                      <Typography margin={'5px 20px'}>9.	The website is a direct seller any middleman that is using the name of the brand is not in any way part of Paws and Claws. If there some case, please report them to us.</Typography>
+                      <Typography margin={'5px 20px'}>10.	There are no fixed shipping fee because the shipping may vary to the time and location of the user.</Typography>
+                      <Button onClick={handleClose}>I Accept</Button>
+                  </Paper>
+                </Box>
+              </Modal>
+
               <Button
                 variant="contained"
                 fullWidth

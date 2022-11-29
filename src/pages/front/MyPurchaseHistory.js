@@ -25,7 +25,7 @@ const style = {
   maxWidth: 360,
 };
 
-function MyPurchase() {
+function MyPurchaseHistory() {
   useAuthentication("User");
 
   const [orders, setOrders] = useState([]);
@@ -41,9 +41,9 @@ function MyPurchase() {
       const orderList = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
         .filter(
-          (cartEmail) => cartEmail.Email === sessionStorage.getItem("email")
+          (cart) => cart.Email === sessionStorage.getItem("email")
           &&
-          cartEmail.Status === 'On Process' || cartEmail.Status === 'On Request'
+          cart.Status === "Completed" || cart.Status === "Completed"
         );
       let uniqueOrderId = [
         ...new Set(orderList.map((order) => order.OrderNumber)),
@@ -98,8 +98,8 @@ function MyPurchase() {
         <Sidebar />
         <div className="content-container">
           <Paper className="content-header" elevation={1}>
-            <Link to="/mypurchase">Order</Link>
-            <Link to="/mypurchase/mypurchasedhistory">My Purchased History</Link>
+            <Link to="/mypurchase" style={{color: '#F2F2F2'}}>Order</Link>
+            <Link to="/mypurchase/mypurchasedhistory" style={{color: '#404040'}}>My Purchased History</Link>
           </Paper>
           {finalLists.map((order) => {
             return (
@@ -179,4 +179,4 @@ function MyPurchase() {
   );
 }
 
-export default MyPurchase;
+export default MyPurchaseHistory;

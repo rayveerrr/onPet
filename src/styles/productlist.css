@@ -33,11 +33,10 @@
 .product-container .allproduct{
     width: 77%;
     margin-bottom: 5px;
-    background-color: var(--white);
 }
 
 .product-container .allproduct .productheader{
-    height: 5%;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
