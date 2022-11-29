@@ -113,7 +113,7 @@ const Supplies = () => {
   const addProduct = async () => {
     const uploadedImage = await uploadImage()
     try {
-      setLoading(true)
+      setLoading(true);
       await addDoc(productCollectionRef, {
         Category: category,
         Description: description,
@@ -126,7 +126,7 @@ const Supplies = () => {
     } catch (e) {
       console.log(e);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   // Read all the product
@@ -383,8 +383,15 @@ const Supplies = () => {
                     setImgUpload(e.target.files[0]);
                   }}
                 />
+<<<<<<< HEAD
 
                 <div style={{ marginTop: 2 }}>
+=======
+                <Button variant="contained" onClick={uploadImage}>
+                  Upload Image
+                </Button>
+                <div>
+>>>>>>> 520566c0075145934950e5f9165d9b281b352bd7
                   <Button
                     variant="contained"
                     className="save-btn"
